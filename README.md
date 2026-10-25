@@ -2,7 +2,7 @@
 
 Personal portfolio of **Louise Angello “Loy” Cabaña**: web apps, mobile apps and games, with a case-study page and demo video for each project.
 
-**Live:** _added after the first deploy_
+**Live:** https://loy-cabana.vercel.app
 
 ## Stack
 
