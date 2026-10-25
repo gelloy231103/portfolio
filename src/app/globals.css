@@ -1,26 +1,123 @@
 @import "tailwindcss";
 
+/* Design tokens. Light is the base; dark applies via system preference or the theme toggle. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #eceef1;
+  --surface: #f8f9fa;
+  --raised: #ffffff;
+  --ink: #121419;
+  --muted: #596070;
+  --line: #d3d8df;
+  --accent: #2b44d9;
+  --accent-soft: #dde2fb;
+  --ok: #147a4c;
+  --ok-soft: #d7f0e3;
+  --award: #8a5a00;
+  --award-soft: #fbefd2;
+  --danger: #b4232f;
+  --tl: 93%;
+  --ts: 55%;
+  --td: 42%;
+  --shadow: 0 1px 2px rgb(18 20 25 / 0.06), 0 12px 32px -12px rgb(18 20 25 / 0.18);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0f13; --surface: #15181e; --raised: #1b1f27; --ink: #e8ebf0; --muted: #949baa; --line: #272c36;
+    --accent: #8d9cff; --accent-soft: #232a4d; --ok: #4cd69a; --ok-soft: #14301f; --award: #f2c14e; --award-soft: #2e2510;
+    --danger: #ff8a93; --tl: 17%; --ts: 32%; --td: 72%;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -16px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0f13; --surface: #15181e; --raised: #1b1f27; --ink: #e8ebf0; --muted: #949baa; --line: #272c36;
+  --accent: #8d9cff; --accent-soft: #232a4d; --ok: #4cd69a; --ok-soft: #14301f; --award: #f2c14e; --award-soft: #2e2510;
+  --danger: #ff8a93; --tl: 17%; --ts: 32%; --td: 72%;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -16px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --font-display: var(--font-bricolage), "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-figtree), "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); font-size: 16px; line-height: 1.6; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.05; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--accent-soft); }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.wrap { max-width: 1160px; margin-inline: auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+.label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* Buttons and pills */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 600;
+  font-size: 0.95rem; text-decoration: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  cursor: pointer; transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--ink) 30%, var(--line)); }
+.btn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn svg { width: 16px; height: 16px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--bg);
+}
+.pill-team { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); background: var(--accent-soft); }
+.pill-award { color: var(--award); border-color: color-mix(in srgb, var(--award) 40%, var(--line)); background: var(--award-soft); }
+.pill-video { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, var(--line)); background: var(--ok-soft); }
+.tag { font-family: var(--font-mono); font-size: 0.74rem; padding: 3px 8px; border-radius: 6px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
+
+/* Hero pulse */
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); animation: pulse 2.4s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.rise { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes rise { from { transform: translateY(18px); opacity: 0.001; } to { transform: none; opacity: 1; } }
+
+/* Project cards: the stage is tinted by each project's hue */
+.stage { --h: 220; position: relative; background: hsl(var(--h) var(--ts) var(--tl)); display: grid; place-items: center; padding: 28px; overflow: hidden; isolation: isolate; }
+.stage::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(hsl(var(--h) var(--ts) var(--td) / 0.16) 1px, transparent 1.2px);
+  background-size: 16px 16px; mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+.project-card { transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s, border-color 0.25s; }
+.project-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--ink) 18%, var(--line)); }
+.project-card .stage > * { transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.project-card:hover .stage > * { transform: translateY(-6px) scale(1.015); }
+
+/* Device mocks (drawn with CSS, no images) */
+.m-browser { width: min(100%, 420px); background: var(--raised); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px -18px hsl(var(--h) 40% 20% / 0.45), 0 0 0 1px hsl(var(--h) 20% 50% / 0.15); }
+.m-browser .bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.m-browser .bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.m-browser .url { margin-left: 8px; flex: 1; font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); background: var(--bg); border-radius: 6px; padding: 3px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-browser .screen { padding: 18px; min-height: 170px; }
+.m-phone { width: 168px; max-width: 100%; aspect-ratio: 9 / 18.5; background: var(--raised); border-radius: 28px; padding: 9px; box-shadow: 0 24px 40px -18px hsl(var(--h) 40% 20% / 0.5), 0 0 0 1px hsl(var(--h) 20% 50% / 0.2); }
+.m-phone .screen { height: 100%; border-radius: 20px; background: var(--surface); overflow: hidden; display: flex; flex-direction: column; padding: 12px 10px; gap: 8px; }
+.m-phone .notch { width: 46px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto 4px; }
+.m-game { width: min(100%, 420px); aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 40px -18px hsl(var(--h) 40% 15% / 0.55), 0 0 0 4px hsl(var(--h) 25% 22%), 0 0 0 5px hsl(var(--h) 25% 40% / 0.4); }
+.hue-strong { background: hsl(var(--h) 55% var(--td)); }
+.hue-tint { background: hsl(var(--h) var(--ts) var(--tl)); }
+.hue-text { color: hsl(var(--h) 55% var(--td)); }
+
+/* Timeline */
+.tl-dot::before { content: ""; position: absolute; left: 5px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent); }
+.tl-dot::after { content: ""; position: absolute; left: 9px; top: 20px; bottom: -6px; width: 2px; background: var(--line); }
+li:last-child > .tl-dot::after { display: none; }
+
+/* Feature list bullets */
+.feat li::before { content: ""; width: 8px; height: 8px; margin-top: 9px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
