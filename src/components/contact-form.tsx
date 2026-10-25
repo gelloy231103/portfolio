@@ -11,17 +11,18 @@ export function ContactForm() {
 
   if (state.status === "success") {
     return (
-      <p role="status" className="rounded-2xl border border-[color-mix(in_srgb,var(--bg)_25%,transparent)] p-6 text-lg">
-        {state.message}
-      </p>
+      <div role="status" className="border border-ink bg-fill p-6">
+        <p className="mono-label m-0 text-mark">Message received</p>
+        <p className="mt-2 mb-0 text-lg">{state.message}</p>
+      </div>
     );
   }
 
   return (
     <form action={formAction} noValidate className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="name" label="Name" autoComplete="name" defaultValue={values?.name} error={state.errors?.name} />
-        <Field id="email" label="E-mail" type="email" autoComplete="email" defaultValue={values?.email} error={state.errors?.email} />
+        <Field id="name" label="Your name" autoComplete="name" defaultValue={values?.name} error={state.errors?.name} />
+        <Field id="email" label="Your e-mail" type="email" autoComplete="email" defaultValue={values?.email} error={state.errors?.email} />
       </div>
       <Field id="message" label="Message" multiline defaultValue={values?.message} error={state.errors?.message} />
       {/* Honeypot for bots; hidden from people and screen readers. */}
@@ -30,10 +31,10 @@ export function ContactForm() {
         <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
       </div>
       <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" disabled={pending} className="btn cursor-pointer border-bg bg-bg text-ink disabled:cursor-wait disabled:opacity-70">
+        <button type="submit" disabled={pending} className="btn btn-solid disabled:cursor-wait disabled:opacity-70">
           {pending ? "Sending…" : "Send message"}
         </button>
-        <p aria-live="polite" className="m-0 text-sm opacity-80">
+        <p aria-live="polite" className="m-0 text-sm text-mark">
           {state.status === "error" ? state.message : ""}
         </p>
       </div>
@@ -60,21 +61,13 @@ function Field({ id, label, type = "text", autoComplete, multiline, defaultValue
     defaultValue,
     "aria-invalid": Boolean(error) || undefined,
     "aria-describedby": error ? errorId : undefined,
-    className:
-      "w-full rounded-xl border bg-transparent px-4 py-3 text-bg placeholder:text-bg/50 outline-none transition-colors focus:border-bg " +
-      (error ? "border-[var(--danger)]" : "border-[color-mix(in_srgb,var(--bg)_30%,transparent)]"),
+    className: `w-full border bg-sheet px-3 py-2.5 text-ink outline-none transition-colors focus:border-mark ${error ? "border-mark" : "border-ink"}`,
   };
   return (
-    <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium opacity-80">
-        {label}
-      </label>
+    <div className="grid gap-1">
+      <label htmlFor={id} className="mono-label">{label}</label>
       {multiline ? <textarea rows={5} maxLength={2000} {...common} /> : <input type={type} autoComplete={autoComplete} {...common} />}
-      {error && (
-        <p id={errorId} className="m-0 text-sm text-[var(--danger)]">
-          {error}
-        </p>
-      )}
+      {error && <p id={errorId} className="m-0 text-sm text-mark">{error}</p>}
     </div>
   );
 }

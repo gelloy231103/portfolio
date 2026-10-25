@@ -1,76 +1,70 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { site } from "@/content/site";
+import { getServerTheme, getTheme, setTheme, subscribeTheme, type Theme } from "@/lib/theme";
 
 const links = [
-  { href: "/#work", label: "Work", keep: true },
-  { href: "/#about", label: "About" },
-  { href: "/#journey", label: "Journey" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#history", label: "History", hideOnPhone: true },
   { href: "/#contact", label: "Contact" },
 ];
 
 export function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      className={`sticky top-[env(safe-area-inset-top,0px)] z-20 border-b backdrop-blur-md transition-colors ${scrolled ? "border-line" : "border-transparent"}`}
-      style={{ background: "color-mix(in srgb, var(--bg) 82%, transparent)" }}
-    >
-      <div className="wrap flex items-center gap-4 py-3.5">
-        <Link href="/" className="flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight no-underline">
-          <i className="grid size-7 place-items-center rounded-lg bg-ink text-[0.95rem] not-italic text-bg">L</i>
-          {site.shortName}
+    <header className="sticky top-[env(safe-area-inset-top,0px)] z-30 border-b-2 border-ink bg-sheet">
+      <div className="mx-auto flex max-w-[1120px] items-stretch">
+        <Link href="/" className="flex items-center gap-3 border-r border-hair py-2.5 pr-4 pl-[clamp(16px,4vw,48px)] no-underline" aria-label={`${site.name}, home`}>
+          <span className="grid h-8 w-11 place-items-center bg-ink font-mono text-[0.72rem] font-semibold tracking-wider text-sheet">{site.initials}</span>
+          <span className="hidden leading-tight sm:block">
+            <span className="block font-cond text-[0.98rem] font-semibold">{site.name}</span>
+            <span className="block font-mono text-[0.66rem] tracking-wide text-ink-2">DATASHEET · REV {site.revision}</span>
+          </span>
         </Link>
-        <nav aria-label="Sections" className="ml-auto flex items-center gap-1">
+        <nav aria-label="Sections" className="ml-auto flex items-stretch">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className={`rounded-full px-3 py-2 text-[0.92rem] font-medium text-muted no-underline transition-colors hover:bg-surface hover:text-ink ${l.keep ? "" : "max-[620px]:hidden"}`}
+              className={`flex items-center border-l border-hair px-3 font-mono text-[0.78rem] tracking-wide text-ink no-underline hover:bg-fill sm:px-4 ${l.hideOnPhone ? "max-sm:hidden" : ""}`}
             >
               {l.label}
             </Link>
           ))}
-          <ThemeToggle />
+          <ThemeSwitch />
         </nav>
       </div>
     </header>
   );
 }
 
-function ThemeToggle() {
-  const toggle = () => {
-    const root = document.documentElement;
-    const current = root.dataset.theme ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    const next = current === "dark" ? "light" : "dark";
-    root.dataset.theme = next;
-    try {
-      localStorage.setItem("theme", next);
-    } catch {
-      /* storage can be unavailable (private mode); the toggle still works for this visit */
-    }
-  };
+/** Light = printed datasheet, dark = blueprint. */
+function ThemeSwitch() {
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
+  const choose = (next: Theme) => setTheme(next);
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label="Switch colour theme"
-      className="grid size-9.5 cursor-pointer place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-raised"
-    >
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-      </svg>
-    </button>
+    <div role="group" aria-label="Page style" className="flex items-stretch border-l border-hair pr-[clamp(16px,4vw,48px)]">
+      {(
+        [
+          ["light", "Datasheet", "Sheet"],
+          ["dark", "Blueprint", "Blue"],
+        ] as const
+      ).map(([value, label, short]) => (
+        <button
+          key={value}
+          type="button"
+          aria-pressed={theme === value}
+          onClick={() => choose(value)}
+          className={`cursor-pointer px-2.5 font-mono text-[0.72rem] tracking-wide transition-colors sm:px-3 ${
+            theme === value ? "bg-ink text-sheet" : "text-ink-2 hover:text-ink"
+          }`}
+        >
+          <span className="max-sm:hidden">{label}</span>
+          <span className="sm:hidden">{short}</span>
+        </button>
+      ))}
+    </div>
   );
 }

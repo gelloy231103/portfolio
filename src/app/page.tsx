@@ -1,170 +1,207 @@
+import Image from "next/image";
 import Link from "next/link";
+import { BlockDiagram } from "@/components/block-diagram";
 import { ContactForm } from "@/components/contact-form";
 import { CopyEmail } from "@/components/copy-email";
-import { ArrowDown, FileIcon, GitHubIcon } from "@/components/icons";
-import { WorkGrid } from "@/components/work-grid";
+import { ArrowUpRight, FileIcon, GitHubIcon } from "@/components/icons";
 import { credentials } from "@/content/credentials";
-import { projects } from "@/content/projects";
+import { experience } from "@/content/experience";
+import { projectsNewestFirst } from "@/content/projects";
 import { site } from "@/content/site";
-import { skillGroups } from "@/content/skills";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+const howIBuild = [
+  { label: "Input", blocks: ["Idea or brief", "Requirements"] },
+  { label: "Interface", blocks: ["React · Next.js", "Flutter · React Native", "Unity · C#"] },
+  { label: "Services", blocks: ["Node.js APIs", "Supabase · Postgres", "Firebase"] },
+  { label: "Output", blocks: ["Web apps on Vercel", "Mobile apps", "Games"] },
+];
+
 export default function HomePage() {
-  const tools = new Set(projects.flatMap((p) => p.stack));
-  const platforms = new Set(projects.map((p) => p.kind));
-  const timeline = [...projects].sort((a, b) => b.year - a.year || b.month - a.month);
+  const withVideo = projectsNewestFirst.filter((p) => p.video);
+  const stack = Array.from(new Set(projectsNewestFirst.flatMap((p) => p.stack)));
 
   return (
     <>
-      {/* Hero */}
-      <section className="wrap pt-[clamp(48px,9vw,112px)] pb-[clamp(40px,6vw,72px)]" aria-labelledby="hero-name">
-        <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface py-1.5 pr-3.5 pl-2.5 text-[0.86rem] text-muted">
-          <span className="pulse" aria-hidden="true" />
-          Now building <b className="font-semibold text-ink">{site.currentlyBuilding}</b>
-        </span>
-        <h1 id="hero-name" className="mt-7 text-[clamp(3rem,10.5vw,8.6rem)] leading-[0.9] font-extrabold tracking-[-0.045em]">
-          <span className="rise block">Louise Angello</span>
-          <span className="rise block [animation-delay:80ms]">
-            <span className="font-normal text-muted">“{site.nickname}”</span> Cabaña
-          </span>
-        </h1>
-        <div className="mt-[clamp(28px,4vw,48px)] grid items-end gap-[clamp(24px,5vw,64px)] md:grid-cols-[1.3fr_1fr]">
-          <div>
-            <p className="m-0 max-w-[34ch] text-[clamp(1.08rem,1.6vw,1.3rem)] leading-relaxed">
-              I build{" "}
-              <em className="not-italic" style={{ background: "linear-gradient(transparent 62%, var(--accent-soft) 62%)" }}>
-                web apps, mobile apps and games
-              </em>
-              , from the database to the last pixel, and ship them for real people to use.
+      {/* Title block */}
+      <section className="pad grid-bg border-b border-hair pt-10 pb-12 sm:pt-14" aria-labelledby="name">
+        <div className="flex flex-wrap justify-between gap-2 font-mono text-[0.72rem] tracking-[0.08em] text-ink-2">
+          <span>PERSONAL DATASHEET</span>
+          <span>{site.initials}-{site.copyrightYear} · REV {site.revision}</span>
+        </div>
+        <div className="mt-8 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:items-end">
+          <div className="min-w-0 bg-sheet/80">
+            <h1 id="name" className="m-0 font-cond text-[clamp(2.9rem,8.5vw,6.4rem)] leading-[0.92] font-bold tracking-[-0.02em] uppercase">
+              Louise Angello
+              <br />
+              Cabaña
+            </h1>
+            <p className="rev-mark mt-6 mb-0 font-cond text-[clamp(1.2rem,2.4vw,1.55rem)] leading-snug font-semibold">
+              {site.role}
+              <span className="font-medium text-ink-2"> · {site.employer}</span>
             </p>
-            <div className="mt-6 flex flex-wrap gap-2.5">
-              <Link href="#work" className="btn btn-primary">See my work <ArrowDown /></Link>
+            <p className="mt-2 mb-0 max-w-[46ch] text-[1.05rem] text-ink-2">{site.headline}</p>
+            <div className="mt-7 flex flex-wrap gap-2.5">
+              <Link href="#projects" className="btn btn-solid">View projects</Link>
               <a href={site.github} target="_blank" rel="noopener noreferrer" className="btn"><GitHubIcon /> GitHub</a>
               {site.resume && (
-                <a href={site.resume} target="_blank" rel="noopener noreferrer" className="btn"><FileIcon /> Résumé</a>
+                <a href={site.resume} target="_blank" rel="noopener noreferrer" className="btn"><FileIcon /> Résumé (PDF)</a>
               )}
+              <Link href="#contact" className="btn">Contact</Link>
             </div>
           </div>
-          <dl className="m-0 grid grid-cols-3 border-t border-line" aria-label="At a glance">
-            {[
-              [projects.length, "projects built"],
-              [tools.size, "tools & languages"],
-              [platforms.size, "platforms"],
-            ].map(([n, label], i) => (
-              <div key={label} className={`pt-4.5 pb-1 ${i > 0 ? "border-l border-line pl-4.5" : ""}`}>
-                <dt className="sr-only">{label}</dt>
-                <dd className="m-0">
-                  <strong className="block font-display text-[clamp(2rem,4vw,2.8rem)] leading-none font-semibold tracking-tight tabular-nums">{n}</strong>
-                  <span className="text-[0.85rem] text-muted" aria-hidden="true">{label}</span>
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <table className="spec bg-sheet" aria-label="At a glance">
+            <thead>
+              <tr><th colSpan={2}>At a glance</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Current role</th><td>{site.role}</td></tr>
+              <tr><th scope="row">Organization</th><td>{site.employer}</td></tr>
+              <tr><th scope="row">Builds</th><td>Web apps · Mobile apps · Games</td></tr>
+              <tr><th scope="row">Projects</th><td>{projectsNewestFirst.length} shipped or in progress</td></tr>
+              <tr><th scope="row">Tools</th><td>{stack.slice(0, 7).join(", ")} + {stack.length - 7} more</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
-      {/* Work */}
-      <section id="work" className="wrap scroll-mt-20 py-[clamp(48px,7vw,96px)]" aria-labelledby="work-heading">
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <h2 id="work-heading" className="text-[clamp(2rem,4.4vw,3.2rem)] font-semibold tracking-[-0.035em]">Selected work</h2>
-            <p className="mt-2 mb-0 max-w-[52ch] text-muted">Open any project for the full story, a demo video where there is one, and my part in it.</p>
-          </div>
-        </div>
-        <WorkGrid />
-      </section>
-
-      {/* About */}
-      <section id="about" className="wrap scroll-mt-20 py-[clamp(48px,7vw,96px)]" aria-labelledby="about-heading">
-        <div className="grid gap-[clamp(28px,5vw,72px)] md:grid-cols-[1fr_1.2fr]">
-          <div>
-            <h2 id="about-heading" className="label mb-3">About</h2>
-            <p className="m-0 font-display text-[clamp(1.5rem,2.6vw,2.1rem)] leading-tight font-normal tracking-tight">
-              I like taking an idea all the way: <b className="font-semibold">planning it, building it, and putting it in front of users.</b>
+      {/* 01 Features / Description */}
+      <section className="pad py-12" aria-labelledby="features-h">
+        <SectionHead no="01" id="features-h" title="Features" aside="Description" />
+        <div className="grid gap-10 md:grid-cols-2">
+          <ul className="bullets">
+            <li>Builds full-stack web apps with Next.js, Node.js and Supabase, deployed on Vercel</li>
+            <li>Ships mobile apps in Flutter and React Native, backed by Firebase</li>
+            <li>Makes 3D games in Unity and C#, including a Top 8 finalist at Young Creative Challenges</li>
+            <li>Takes products end to end: interface, database, payments and deployment</li>
+            <li>Currently a {site.role} at the {site.employer}</li>
+          </ul>
+          <div className="grid gap-3 text-ink-2">
+            <p className="m-0">
+              I like taking an idea all the way: planning it, building it, and putting it in front of the people it&apos;s for. My work ranges
+              from an invitation-website business with payments and RSVPs, to a study app with encrypted profiles, to an app that teaches sign
+              language, to a Unity game built for my capstone.
             </p>
-          </div>
-          <div>
-            <p className="mt-0 max-w-[60ch] text-muted">
-              My projects range from a full invitation-website business with payments and RSVPs, to a study app with encrypted profiles, to an app
-              that teaches sign language, to a 3D learning game built in Unity for my capstone. I care about the details people notice: fast pages,
-              clear screens, and things that work on a phone first.
-            </p>
-            <dl className="mt-2 grid gap-4.5">
-              {Object.entries(skillGroups).map(([group, list]) => {
-                const used = list.filter((t) => tools.has(t));
-                if (used.length === 0) return null;
-                return (
-                  <div key={group} className="grid items-baseline gap-2 border-t border-line pt-4 md:grid-cols-[120px_1fr] md:gap-4">
-                    <dt className="label">{group}</dt>
-                    <dd className="m-0 flex flex-wrap gap-1.5">
-                      {used.map((t) => <span key={t} className="tag">{t}</span>)}
-                    </dd>
-                  </div>
-                );
-              })}
-            </dl>
+            <p className="m-0">I care about the details people notice: pages that load fast, screens that are clear, and things that work on a phone first.</p>
           </div>
         </div>
       </section>
 
-      {/* Journey */}
-      <section id="journey" className="wrap scroll-mt-20 py-[clamp(48px,7vw,96px)]" aria-labelledby="journey-heading">
-        <h2 id="journey-heading" className="text-[clamp(2rem,4.4vw,3.2rem)] font-semibold tracking-[-0.035em]">Journey so far</h2>
-        <p className="mt-2 mb-7 text-muted">Each project, newest first.</p>
-        <ol className="m-0 grid list-none p-0">
-          {timeline.map((p) => (
-            <li key={p.slug} className="grid grid-cols-[20px_1fr] items-start gap-x-4 sm:grid-cols-[110px_20px_1fr]">
-              <span className="col-start-2 font-mono text-[0.8rem] text-muted tabular-nums sm:col-start-1 sm:pt-0.5">
-                {MONTHS[p.month - 1]} {p.year}
-              </span>
-              <span className="tl-dot relative row-span-2 row-start-1 h-full sm:row-span-1 sm:col-start-2" aria-hidden="true" />
-              <div className="col-start-2 pb-6.5 sm:col-start-3">
-                <Link href={`/work/${p.slug}`} className="font-display text-lg font-semibold underline-offset-4 hover:underline">{p.name}</Link>
-                <span className="block text-[0.92rem] text-muted">{p.kind} · {p.context} · {p.stack.slice(0, 3).join(", ")}</span>
-              </div>
+      {/* 02 Functional block diagram */}
+      <section className="pad pb-12" aria-labelledby="diagram-h">
+        <SectionHead no="02" id="diagram-h" title="Functional block diagram" />
+        <figure className="figure m-0">
+          <BlockDiagram stages={howIBuild} label="How I build, from requirements to shipped product" />
+          <figcaption><b>Figure 1.</b>How I build: from an idea to a product people can use.</figcaption>
+        </figure>
+      </section>
+
+      {/* 03 Application notes */}
+      <section id="projects" className="pad scroll-mt-16 pb-12" aria-labelledby="projects-h">
+        <SectionHead no="03" id="projects-h" title="Application notes" aside={`${projectsNewestFirst.length} projects`} />
+        <ol className="m-0 list-none border-t border-ink p-0">
+          {projectsNewestFirst.map((p) => (
+            <li key={p.slug} className="border-b border-hair">
+              <Link
+                href={`/work/${p.slug}`}
+                className="group grid grid-cols-[64px_1fr_auto] items-baseline gap-x-4 gap-y-1 px-1 py-4 text-ink no-underline transition-colors hover:bg-fill sm:grid-cols-[72px_minmax(0,1.6fr)_minmax(0,1fr)_70px_24px]"
+              >
+                <span className="font-mono text-[0.8rem] font-semibold text-mark">{p.code}</span>
+                <span className="min-w-0">
+                  <span className="block font-cond text-[1.35rem] leading-tight font-semibold">{p.name}</span>
+                  <span className="block text-[0.92rem] text-ink-2">{p.tagline}</span>
+                </span>
+                <span className="col-start-2 font-mono text-[0.75rem] text-ink-2 sm:col-start-auto">{p.kind} · {p.stack.slice(0, 3).join(", ")}</span>
+                <span className="col-start-3 row-start-1 font-mono text-[0.75rem] text-ink-2 sm:col-start-auto sm:row-start-auto">{MONTHS[p.month - 1]} {p.year}</span>
+                <ArrowUpRight className="hidden size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:block" />
+              </Link>
             </li>
           ))}
         </ol>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {withVideo.map((p, i) => (
+            <Link key={p.slug} href={`/work/${p.slug}`} className="figure group block text-ink no-underline">
+              <div className="relative aspect-video overflow-hidden bg-black">
+                <Image src={p.video!.poster} alt={`${p.name} demo`} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                <span className="absolute right-2 bottom-2 bg-ink px-2 py-1 font-mono text-[0.66rem] tracking-wide text-sheet">▶ VIDEO</span>
+              </div>
+              <figcaption>
+                <b>Figure {i + 2}.</b>
+                {p.name}, {p.code}
+              </figcaption>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      {/* Awards & certificates */}
+      {/* 04 Revision history */}
+      <section id="history" className="pad scroll-mt-16 pb-12" aria-labelledby="history-h">
+        <SectionHead no="04" id="history-h" title="Revision history" />
+        <div className="overflow-x-auto">
+          <table className="spec min-w-[520px]">
+            <thead>
+              <tr><th className="w-[120px]">Date</th><th>Change</th></tr>
+            </thead>
+            <tbody>
+              {experience.map((r) => (
+                <tr key={r.title}>
+                  <td className="font-mono text-[0.82rem] font-semibold text-mark">{r.period}</td>
+                  <td><b className="font-semibold">{r.title}</b>, {r.organization}</td>
+                </tr>
+              ))}
+              {projectsNewestFirst.map((p) => (
+                <tr key={p.slug}>
+                  <td className="font-mono text-[0.82rem] text-ink-2">{MONTHS[p.month - 1]} {p.year}</td>
+                  <td>
+                    <Link href={`/work/${p.slug}`} className="a">{p.name}</Link> ({p.code}): {p.status === "In progress" ? "started" : "completed"}, {p.context.toLowerCase()}
+                    {p.award ? `. ${p.award}` : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* 05 Qualifications */}
       {credentials.length > 0 && (
-        <section id="credentials" className="wrap scroll-mt-20 py-[clamp(32px,5vw,64px)]" aria-labelledby="credentials-heading">
-          <h2 id="credentials-heading" className="text-[clamp(2rem,4.4vw,3.2rem)] font-semibold tracking-[-0.035em]">Awards &amp; certificates</h2>
-          <ul className="mt-7 grid list-none gap-3 p-0 sm:grid-cols-2">
-            {credentials.map((c) => (
-              <li key={c.title} className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surface p-5">
-                <span className={`pill w-fit ${c.kind === "Award" ? "pill-award" : "pill-team"}`}>{c.kind}</span>
-                <b className="font-display text-lg font-semibold">{c.title}</b>
-                <span className="text-sm text-muted">{c.issuer} · <time dateTime={c.date}>{formatMonth(c.date)}</time></span>
-                {c.url && (
-                  <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
-                    Verify credential
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
+        <section id="qualifications" className="pad scroll-mt-16 pb-12" aria-labelledby="qual-h">
+          <SectionHead no="05" id="qual-h" title="Qualifications" aside="Awards & certificates" />
+          <div className="overflow-x-auto">
+            <table className="spec min-w-[520px]">
+              <thead>
+                <tr><th>Title</th><th>Issuer</th><th className="w-[110px]">Date</th></tr>
+              </thead>
+              <tbody>
+                {credentials.map((c) => (
+                  <tr key={c.title}>
+                    <td>
+                      <b className="font-semibold">{c.title}</b>
+                      {c.url && <> · <a href={c.url} target="_blank" rel="noopener noreferrer" className="a">verify</a></>}
+                    </td>
+                    <td className="text-ink-2">{c.issuer}</td>
+                    <td className="font-mono text-[0.82rem] text-ink-2"><time dateTime={c.date}>{formatMonth(c.date)}</time></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
 
-      {/* Contact */}
-      <section id="contact" className="wrap scroll-mt-20 py-[clamp(48px,7vw,96px)]" aria-labelledby="contact-heading">
-        <div className="grid gap-10 rounded-[28px] bg-ink p-[clamp(28px,6vw,72px)] text-bg lg:grid-cols-[1fr_1.1fr]">
-          <div className="grid content-start gap-7">
-            <h2 id="contact-heading" className="text-[clamp(2.2rem,6vw,4.6rem)] leading-[0.95] font-extrabold tracking-[-0.04em]">
-              Have a project
-              <br />
-              in mind?
-            </h2>
-            <p className="m-0 max-w-[48ch] opacity-75">
-              I&apos;m open to internships, junior roles, freelance builds and team projects. Send a message here, or copy my e-mail.
-            </p>
-            <div className="flex flex-wrap gap-3">
+      {/* 06 Contact */}
+      <section id="contact" className="pad scroll-mt-16 pb-14" aria-labelledby="contact-h">
+        <SectionHead no={credentials.length > 0 ? "06" : "05"} id="contact-h" title="Contact" aside="Ordering information" />
+        <div className="grid gap-10 md:grid-cols-[1fr_1.3fr]">
+          <div className="grid content-start gap-5">
+            <p className="m-0 font-cond text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-semibold">Have a project or a role in mind?</p>
+            <p className="m-0 text-ink-2">Send a message with the form, or copy my e-mail address. I reply by e-mail.</p>
+            <div className="grid gap-2.5">
               <CopyEmail email={site.email} />
-              <a href={site.github} target="_blank" rel="noopener noreferrer" className="btn border-[color-mix(in_srgb,var(--bg)_30%,transparent)] bg-transparent text-bg">
-                github.com/{site.githubHandle}
+              <a href={site.github} target="_blank" rel="noopener noreferrer" className="btn w-full justify-between sm:w-auto">
+                github.com/{site.githubHandle} <ArrowUpRight />
               </a>
             </div>
           </div>
@@ -172,6 +209,16 @@ export default function HomePage() {
         </div>
       </section>
     </>
+  );
+}
+
+function SectionHead({ no, id, title, aside }: { no: string; id: string; title: string; aside?: string }) {
+  return (
+    <div className="sec-head">
+      <span className="no">{no}</span>
+      <h2 id={id}>{title}</h2>
+      {aside && <span className="aside max-sm:hidden">{aside}</span>}
+    </div>
   );
 }
 

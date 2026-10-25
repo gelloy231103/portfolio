@@ -1,18 +1,20 @@
 export const site = {
   name: "Louise Angello Cabaña",
-  shortName: "Loy Cabaña",
-  nickname: "Loy",
-  role: "Full-stack developer",
+  /** Short form used in compact places (header mark, tab titles). */
+  initials: "LAC",
+  role: "Computer Programmer III",
+  employer: "Commission on Elections",
+  headline: "Full-stack developer for web, mobile and games.",
   description:
-    "Louise Angello “Loy” Cabaña builds web apps, mobile apps and games, from the database to the last pixel.",
+    "Louise Angello Cabaña is a Computer Programmer III at the Commission on Elections who builds web apps, mobile apps and games, from the database to the last pixel.",
   email: "louiseangellopuncia@gmail.com",
   github: "https://github.com/gelloy231103",
   githubHandle: "gelloy231103",
-  /** Shown in the hero status pill. */
-  currentlyBuilding: "Vow & Verse",
-  /** Path under /public, e.g. "/resume.pdf". Leave null to hide the résumé button. */
+  /** Path under /public, e.g. "/resume.pdf". Leave null to hide the résumé link. */
   resume: null as string | null,
-  /** Used for the footer; kept static so pages prerender without reading the clock. */
+  /** Document revision shown in the header and footer, e.g. "2026.10". */
+  revision: "2026.10",
+  /** Kept static so pages prerender without reading the clock. */
   copyrightYear: 2026,
 } as const;
 

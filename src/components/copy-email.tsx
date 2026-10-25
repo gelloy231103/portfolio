@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { CopyIcon } from "./icons";
 
 export function CopyEmail({ email }: { email: string }) {
-  const [copied, setCopied] = useState<"idle" | "copied" | "selected">("idle");
+  const [state, setState] = useState<"idle" | "copied" | "selected">("idle");
   const textRef = useRef<HTMLSpanElement>(null);
 
   const selectText = () => {
@@ -15,31 +15,28 @@ export function CopyEmail({ email }: { email: string }) {
     const sel = window.getSelection();
     sel?.removeAllRanges();
     sel?.addRange(range);
-    setCopied("selected");
+    setState("selected");
   };
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(email);
-      setCopied("copied");
+      setState("copied");
     } catch {
       selectText();
     }
-    setTimeout(() => setCopied("idle"), 2000);
+    setTimeout(() => setState("idle"), 2200);
   };
 
   return (
-    <button type="button" onClick={copy} className="btn cursor-pointer border-bg bg-bg text-ink">
-      <span ref={textRef} className="font-mono text-[0.9rem] select-all">{email}</span>
-      <CopyIcon />
-      <span aria-live="polite" className="sr-only">
-        {copied === "copied" ? "E-mail copied" : copied === "selected" ? "E-mail selected; press Ctrl+C to copy" : ""}
+    <button type="button" onClick={copy} className="btn w-full justify-between sm:w-auto">
+      <span ref={textRef} className="select-all">{email}</span>
+      <span className="inline-flex items-center gap-1.5 text-ink-2" aria-hidden="true">
+        {state === "copied" ? "Copied" : state === "selected" ? "Ctrl+C" : <CopyIcon />}
       </span>
-      {copied !== "idle" && (
-        <span aria-hidden="true" className="text-xs font-medium text-muted">
-          {copied === "copied" ? "Copied" : "Press Ctrl+C"}
-        </span>
-      )}
+      <span aria-live="polite" className="sr-only">
+        {state === "copied" ? "E-mail address copied" : state === "selected" ? "E-mail selected; press Ctrl+C to copy" : ""}
+      </span>
     </button>
   );
 }
