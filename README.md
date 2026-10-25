@@ -2,7 +2,7 @@
 
 Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the Commission on Elections: web apps, mobile apps and games, each written up as an application note with specifications, a demo video and a system block diagram.
 
-**Live:** https://loy-cabana.vercel.app
+**Live:** https://louise-cabana.vercel.app
 
 ## Stack
 
