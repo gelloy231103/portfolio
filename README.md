@@ -9,14 +9,14 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 | Layer | Choice | Why |
 | --- | --- | --- |
 | Framework | **Next.js 16** (App Router, React 19, TypeScript, Cache Components) | Every page is prerendered at build time; the contact form uses a Server Action. |
-| Styling | **Tailwind CSS 4** + CSS custom properties, Newsreader + IBM Plex Mono | One small token set drives both light and dark themes. |
+| Styling | **Tailwind CSS 4** + CSS custom properties, Bricolage Grotesque + Inter | One small token set drives both light and dark themes; each project brings its own panel colours. |
 | Data | **Supabase** (Postgres + Storage) | Contact messages go to a table protected by Row Level Security; demo videos are served from a public Storage bucket. |
 | Hosting | **Vercel** | Preview deploys on every pull request, production on `main`. |
 | CI | **GitHub Actions** | Lint, type-check and build on every push and pull request. |
 
 ## Highlights
 
-- **Quiet, text-first design.** Set in a serif with small mono labels, one rust accent, no gradients or animation. Projects are a plain list with real screenshots where they exist, and a light/dark toggle remembers your choice.
+- **Showcase design.** A bold headline with a collage of real project screenshots, then each project as a large panel in its own colours with role, stack and result. Case studies follow the same style. A light/dark toggle remembers your choice.
 - **Architecture, not just screenshots.** Every project page has a system diagram built from real HTML, so it stays readable for screen readers and search engines, and stacks vertically on phones.
 - **Content is data.** Projects, experience and awards live in typed files under [`src/content`](src/content); pages render from them.
 - **One case study per project** at `/work/[slug]`, statically generated, each with its own Open Graph image.
@@ -30,12 +30,12 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 ```
 src/
   app/
-    page.tsx                    Home: intro, selected work, about, experience, contact
+    page.tsx                    Home: hero, selected work, about, experience, contact
     work/[slug]/page.tsx        Case study per project
     work/[slug]/opengraph-image.tsx
     actions/contact.ts          Server Action for the contact form
     opengraph-image.tsx, icon.tsx, sitemap.ts, robots.ts
-  components/                   Header, footer, diagram, video, contact form
+  components/                   Header, footer, project panel and cover, diagram, video, contact form
   content/                      Projects, experience, awards and site config
   lib/                          Supabase client (server-only), media URLs, dates and the theme store
 supabase/migrations/            Database schema, RLS policies and the media bucket
@@ -50,6 +50,19 @@ npm run dev
 ```
 
 Without Supabase variables the site still runs: videos are hidden and the contact form asks visitors to e-mail instead.
+
+## Adding screenshots
+
+1. Put the images in `public/screenshots/<project-slug>/`, e.g. `public/screenshots/civiq/decks.png`. Wide (16:9) images look best.
+2. List them on the project in [`src/content/projects.ts`](src/content/projects.ts):
+
+   ```ts
+   gallery: [
+     { src: "/screenshots/civiq/decks.png", alt: "Deck list with mastery progress" },
+   ],
+   ```
+
+The first screenshot becomes the project's cover when it has no demo poster, and all of them appear in a Screenshots section on the case study.
 
 ## Supabase setup
 
