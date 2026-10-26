@@ -9,14 +9,14 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 | Layer | Choice | Why |
 | --- | --- | --- |
 | Framework | **Next.js 16** (App Router, React 19, TypeScript, Cache Components) | Every page is prerendered at build time; the contact form uses a Server Action. |
-| Styling | **Tailwind CSS 4** + CSS custom properties, Bricolage Grotesque + Inter | One small token set drives both light and dark themes; each project brings its own panel colours. |
+| Styling | **Tailwind CSS 4** + CSS custom properties, Bricolage Grotesque + Inter | One small token set drives both light and dark themes. |
 | Data | **Supabase** (Postgres + Storage) | Contact messages go to a table protected by Row Level Security; demo videos are served from a public Storage bucket. |
 | Hosting | **Vercel** | Preview deploys on every pull request, production on `main`. |
 | CI | **GitHub Actions** | Lint, type-check and build on every push and pull request. |
 
 ## Highlights
 
-- **Showcase design.** A bold headline with a collage of real project screenshots, then each project as a large panel in its own colours with role, stack and result. Case studies follow the same style. A light/dark toggle remembers your choice.
+- **Interactive showcase.** A bold headline beside a collage of real project screenshots that fans out on hover (each one links to its case study). Selected work can be filtered by platform; on large screens, hovering or tabbing through the list swaps a live preview with the summary, role, stack and result, and demo videos open in a pop-up player. Phones get one card per project. A light/dark toggle remembers your choice.
 - **Architecture, not just screenshots.** Every project page has a system diagram built from real HTML, so it stays readable for screen readers and search engines, and stacks vertically on phones.
 - **Content is data.** Projects, experience and awards live in typed files under [`src/content`](src/content); pages render from them.
 - **One case study per project** at `/work/[slug]`, statically generated, each with its own Open Graph image.
@@ -35,7 +35,7 @@ src/
     work/[slug]/opengraph-image.tsx
     actions/contact.ts          Server Action for the contact form
     opengraph-image.tsx, icon.tsx, sitemap.ts, robots.ts
-  components/                   Header, footer, project panel and cover, diagram, video, contact form
+  components/                   Header, footer, work showcase, project cover, diagram, video, contact form
   content/                      Projects, experience, awards and site config
   lib/                          Supabase client (server-only), media URLs, dates and the theme store
 supabase/migrations/            Database schema, RLS policies and the media bucket

@@ -25,8 +25,6 @@ export type Project = {
   diagram: DiagramStage[];
   repo?: string;
   live?: string;
-  /** Colours for this project's showcase panel and case-study header. */
-  panel: { bg: string; fg: string };
   /**
    * Extra screenshots shown on the case study, stored under /public/screenshots/<slug>/.
    * The first one is also used as the cover when the project has no demo poster.
@@ -39,7 +37,6 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: "sensai",
-    panel: { bg: "#e4f0fa", fg: "#0d2233" },
     code: "AN-01",
     name: "SensAi",
     tagline: "Learn American Sign Language with an AI conversation partner",
@@ -83,7 +80,6 @@ export const projects: Project[] = [
   },
   {
     slug: "suki",
-    panel: { bg: "#e8f1e1", fg: "#17301a" },
     code: "AN-02",
     name: "Suki",
     tagline: "A farmer-to-consumer marketplace",
@@ -118,7 +114,6 @@ export const projects: Project[] = [
   },
   {
     slug: "nutriventure",
-    panel: { bg: "#2b2a22", fg: "#f3efe2" },
     code: "AN-03",
     name: "NutriVenture",
     tagline: "A Unity adventure about nutrition. I built Kingdom 4, Allergia",
@@ -158,7 +153,6 @@ export const projects: Project[] = [
   },
   {
     slug: "civiq",
-    panel: { bg: "#ebe7fa", fg: "#221a44" },
     code: "AN-04",
     name: "CivIQ",
     tagline: "Flashcards where you highlight the answer inside a sentence",
@@ -191,7 +185,6 @@ export const projects: Project[] = [
   },
   {
     slug: "vow-and-verse",
-    panel: { bg: "#f7e8e8", fg: "#3d1219" },
     code: "AN-05",
     name: "Vow & Verse",
     tagline: "Invitation websites with checkout and RSVPs",

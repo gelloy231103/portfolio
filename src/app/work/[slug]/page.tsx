@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { BlockDiagram } from "@/components/block-diagram";
 import { ArrowLeft, ArrowRight, ArrowUpRight, CheckIcon, GitHubIcon } from "@/components/icons";
 import { ProjectCover } from "@/components/project-cover";
@@ -37,7 +37,6 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
   const i = projectsShowcase.findIndex((p) => p.slug === project.slug);
   const next = projectsShowcase[(i + 1) % projectsShowcase.length];
   const hasVideo = Boolean(project.video && mediaUrl(project.video.file));
-  const colors = { "--p-bg": project.panel.bg, "--p-fg": project.panel.fg } as CSSProperties;
 
   const facts: [string, string][] = [
     ["My role", project.role],
@@ -51,17 +50,17 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
     <article>
       {/* Header */}
       <header className="wrap pt-2">
-        <div className="panel px-6 pt-7 pb-10 sm:px-12 sm:pt-10 sm:pb-14" style={colors}>
-          <Link href="/#work" className="inline-flex items-center gap-2 text-sm font-medium no-underline opacity-75 hover:opacity-100">
+        <div className="pt-4 pb-10 sm:pt-8 sm:pb-14">
+          <Link href="/#work" className="inline-flex items-center gap-2 text-sm font-medium text-ink-2 no-underline hover:text-ink">
             <ArrowLeft className="size-4" /> All work
           </Link>
-          <p className="kicker mt-10 mb-0 opacity-70">{project.kind} · {project.context}</p>
+          <p className="kicker mt-10 mb-0 text-ink-3">{project.kind} · {project.context}</p>
           <h1 className="mt-3 mb-0 text-[clamp(3rem,9vw,6rem)] leading-[0.92] tracking-[-0.045em]">{project.name}</h1>
-          <p className="mt-5 mb-0 max-w-[36ch] text-[clamp(1.15rem,2vw,1.45rem)] leading-snug opacity-85">{project.tagline}</p>
-          <dl className="mt-10 mb-0 grid gap-x-8 gap-y-5 border-t border-current/15 pt-7 text-[0.92rem] sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(170px,1fr))]">
+          <p className="mt-5 mb-0 max-w-[36ch] text-[clamp(1.15rem,2vw,1.45rem)] leading-snug text-ink-2">{project.tagline}</p>
+          <dl className="mt-10 mb-0 grid gap-x-8 gap-y-5 border-t border-line pt-7 text-[0.92rem] sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(170px,1fr))]">
             {facts.map(([k, v]) => (
               <div key={k}>
-                <dt className="opacity-60">{k}</dt>
+                <dt className="text-ink-3">{k}</dt>
                 <dd className="m-0 mt-1 font-medium">{v}</dd>
               </div>
             ))}
@@ -69,12 +68,12 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
           {(project.repo || project.live) && (
             <div className="mt-8 flex flex-wrap gap-3">
               {project.live && (
-                <a href={project.live} target="_blank" rel="noopener noreferrer" className="pill border-current/25 bg-transparent text-current">
+                <a href={project.live} target="_blank" rel="noopener noreferrer" className="pill">
                   Visit site <ArrowUpRight />
                 </a>
               )}
               {project.repo && (
-                <a href={project.repo} target="_blank" rel="noopener noreferrer" className="pill border-current/25 bg-transparent text-current">
+                <a href={project.repo} target="_blank" rel="noopener noreferrer" className="pill">
                   <GitHubIcon /> Source code
                 </a>
               )}
@@ -144,15 +143,14 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
       <nav aria-label="Next project" className="wrap mt-8">
         <Link
           href={`/work/${next.slug}`}
-          className="panel panel-link flex flex-wrap items-end justify-between gap-6 px-6 py-10 no-underline sm:px-12 sm:py-14"
-          style={{ "--p-bg": next.panel.bg, "--p-fg": next.panel.fg } as CSSProperties}
+          className="next-link group flex flex-wrap items-end justify-between gap-6 rounded-[28px] border border-line px-6 py-10 text-ink no-underline sm:px-12 sm:py-14"
         >
           <span>
-            <span className="kicker block opacity-70">Next project</span>
+            <span className="kicker block text-ink-3">Next project</span>
             <span className="mt-2 block font-display text-[clamp(2.4rem,6vw,4.2rem)] leading-none font-bold tracking-[-0.04em]">{next.name}</span>
-            <span className="mt-3 block opacity-80">{next.tagline}</span>
+            <span className="mt-3 block text-ink-2">{next.tagline}</span>
           </span>
-          <ArrowRight className="size-10 shrink-0" />
+          <ArrowRight className="next-arrow size-10 shrink-0" />
         </Link>
       </nav>
       <div className="h-16" />

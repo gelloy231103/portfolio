@@ -1,14 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/contact-form";
 import { CopyEmail } from "@/components/copy-email";
 import { ArrowRight, GitHubIcon } from "@/components/icons";
-import { ProjectPanel } from "@/components/project-panel";
+import { WorkShowcase, type ShowcaseItem } from "@/components/work-showcase";
 import { credentials } from "@/content/credentials";
 import { experience } from "@/content/experience";
 import { coverImage, projects, projectsShowcase } from "@/content/projects";
 import { site } from "@/content/site";
-import { formatMonth } from "@/lib/dates";
+import { formatMonth, monthYear } from "@/lib/dates";
+import { mediaUrl } from "@/lib/media";
+
+/** Where each hero screenshot rests, and where it moves when the collage fans out on hover. */
+type CollagePose = CSSProperties & { "--rest": string; "--fan": string };
 
 const toolGroups = [
   { title: "Web", tools: ["Next.js", "React", "TypeScript", "Node.js", "Supabase", "Postgres", "Tailwind", "Vercel"] },
@@ -20,8 +25,24 @@ export default function HomePage() {
   const years = projects.map((p) => p.year);
   const range = `${Math.min(...years)} to ${Math.max(...years)}`;
   const award = credentials.find((c) => c.kind === "Award");
-  // Up to three real screenshots for the hero collage.
-  const collage = projectsShowcase.map((p) => coverImage(p)).filter((i): i is { src: string; alt: string } => Boolean(i)).slice(0, 3);
+  // Up to three projects with real screenshots for the hero collage.
+  const collage = projectsShowcase.filter((p) => coverImage(p)).slice(0, 3);
+  const showcase: ShowcaseItem[] = projectsShowcase.map((p) => {
+    const videoSrc = p.video ? mediaUrl(p.video.file) : null;
+    return {
+      slug: p.slug,
+      name: p.name,
+      tagline: p.tagline,
+      summary: p.summary,
+      kind: p.kind,
+      when: monthYear(p),
+      role: p.role,
+      stack: p.stack,
+      result: p.award ? { label: "Result", value: p.award } : { label: "Status", value: `${p.status}, ${monthYear(p)}` },
+      cover: coverImage(p) ?? null,
+      video: p.video && videoSrc ? { src: videoSrc, poster: p.video.poster, note: p.video.note } : null,
+    };
+  });
 
   return (
     <>
@@ -65,21 +86,26 @@ export default function HomePage() {
         </div>
 
         {collage.length > 0 && (
-          <div aria-hidden="true" className="relative mx-auto aspect-square w-full max-w-[560px] sm:aspect-[5/4] lg:aspect-[4/5]">
-            <div className="absolute inset-0 rounded-[28px] bg-soft" />
-            {collage.map((img, i) => (
-              <div
-                key={img.src}
-                className="absolute w-[78%] overflow-hidden rounded-xl shadow-[0_24px_50px_-18px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
-                style={[
-                  { left: "6%", top: "8%", transform: "rotate(-4deg)" },
-                  { right: "5%", top: "36%", transform: "rotate(3deg)" },
-                  { left: "9%", bottom: "7%", transform: "rotate(-1.5deg)" },
-                ][i]}
-              >
-                <Image src={img.src} alt="" width={1280} height={720} priority={i === 0} sizes="(min-width: 1024px) 420px, 78vw" className="block h-auto w-full" />
-              </div>
-            ))}
+          <div className="collage relative mx-auto aspect-square w-full max-w-[560px] sm:aspect-[5/4] lg:aspect-[4/5]">
+            {collage.map((p, i) => {
+              const img = coverImage(p)!;
+              const pose: CollagePose = [
+                { left: "6%", top: "8%", "--rest": "rotate(-4deg)", "--fan": "translate(-7%, -5%) rotate(-9deg)" },
+                { right: "5%", top: "36%", "--rest": "rotate(3deg)", "--fan": "translate(7%, 1%) rotate(7deg)" },
+                { left: "9%", bottom: "7%", "--rest": "rotate(-1.5deg)", "--fan": "translate(-3%, 7%) rotate(-3deg)" },
+              ][i];
+              return (
+                <Link
+                  key={p.slug}
+                  href={`/work/${p.slug}`}
+                  aria-label={`${p.name} case study`}
+                  className="collage-card absolute block w-[78%] overflow-hidden rounded-xl shadow-[0_24px_50px_-18px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
+                  style={pose}
+                >
+                  <Image src={img.src} alt="" width={1280} height={720} priority={i === 0} sizes="(min-width: 1024px) 420px, 78vw" className="block h-auto w-full" />
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>
@@ -90,13 +116,7 @@ export default function HomePage() {
           <h2 id="work-h" className="m-0 text-[clamp(2.2rem,4.5vw,3rem)]">Selected work</h2>
           <span className="text-ink-3">{range}</span>
         </div>
-        <ul className="m-0 grid list-none gap-6 p-0">
-          {projectsShowcase.map((p, i) => (
-            <li key={p.slug}>
-              <ProjectPanel project={p} flip={i % 2 === 1} priority={i === 0} />
-            </li>
-          ))}
-        </ul>
+        <WorkShowcase items={showcase} />
       </section>
 
       {/* About */}

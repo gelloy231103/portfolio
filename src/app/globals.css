@@ -2,7 +2,7 @@
 
 /*
   Showcase style: clean white page, bold Bricolage Grotesque headings, Inter for text.
-  Each project brings its own panel colours, so the page itself stays neutral.
+  Neutral throughout: project screenshots supply the colour.
 */
 :root {
   --bg: #ffffff;
@@ -74,14 +74,19 @@ p { text-wrap: pretty; }
 .a { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); text-underline-offset: 3px; }
 .a:hover { text-decoration-color: currentColor; }
 
-/* Showcase panels: colours come from each project via --p-bg / --p-fg. */
-.panel { background: var(--p-bg); color: var(--p-fg); border-radius: 28px; }
-.panel .shot { box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.45); }
-.panel-link { transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.panel-link:hover { transform: translateY(-4px); }
-.panel-link:hover .more { text-decoration-thickness: 3px; }
-.panel-link .shot-inner { transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.panel-link:hover .shot-inner { transform: scale(1.025); }
+/* Showcase preview text fades in when the active project changes. */
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Hero collage: screenshots fan out when hovered, and each one lifts on its own. */
+.collage-card { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.5s; transform: var(--rest); }
+.collage:hover .collage-card { transform: var(--fan); }
+.collage .collage-card:hover, .collage .collage-card:focus-visible { transform: var(--fan) translateY(-10px) scale(1.04); z-index: 10; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.55); }
+
+/* Next-project link on case studies */
+.next-link { transition: border-color 0.3s, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.next-link:hover { border-color: var(--ink-3); }
+.next-link:hover .next-arrow { transform: translateX(6px); }
+.next-arrow { transition: transform 0.3s; }
 
 /* Contact form on the inverted block */
 .field {
