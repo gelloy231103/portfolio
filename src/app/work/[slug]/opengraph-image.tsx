@@ -10,7 +10,6 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-/** Each preview uses the project's own panel colours, like its case study header. */
 export default async function ProjectOpenGraphImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = getProject(slug);
@@ -18,14 +17,14 @@ export default async function ProjectOpenGraphImage({ params }: { params: Promis
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: p.panel.bg, color: p.panel.fg, padding: 80 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, opacity: 0.75 }}>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#ffffff", color: "#111111", padding: 80 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, color: "#6f6f6f" }}>
           <span>{`${p.kind} · ${p.context}`}</span>
           <span>{site.shortName}</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 132, fontWeight: 700, lineHeight: 0.95, letterSpacing: -6 }}>{p.name}</div>
-          <div style={{ fontSize: 38, marginTop: 24, opacity: 0.85, maxWidth: 1000 }}>{p.tagline}</div>
+          <div style={{ fontSize: 38, marginTop: 24, color: "#555555", maxWidth: 1000 }}>{p.tagline}</div>
           {p.award && <div style={{ display: "flex", fontSize: 26, marginTop: 28, fontWeight: 700 }}>{p.award}</div>}
         </div>
       </div>
