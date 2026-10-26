@@ -1,6 +1,6 @@
 # Louise Angello Cabaña · Portfolio
 
-Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the Commission on Elections: web apps, mobile apps and games, each written up as an application note with specifications, a demo video and a system block diagram.
+Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the Commission on Elections: web apps, mobile apps and games, each with its own case study: overview, demo video, contribution and an architecture diagram.
 
 **Live:** https://louise-cabana.vercel.app
 
@@ -9,17 +9,17 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 | Layer | Choice | Why |
 | --- | --- | --- |
 | Framework | **Next.js 16** (App Router, React 19, TypeScript, Cache Components) | Every page is prerendered at build time; the contact form uses a Server Action. |
-| Styling | **Tailwind CSS 4** + CSS custom properties, IBM Plex | One token set drives both page styles: a printed datasheet (light) and a blueprint (dark). |
+| Styling | **Tailwind CSS 4** + CSS custom properties, Newsreader + IBM Plex Mono | One small token set drives both light and dark themes. |
 | Data | **Supabase** (Postgres + Storage) | Contact messages go to a table protected by Row Level Security; demo videos are served from a public Storage bucket. |
 | Hosting | **Vercel** | Preview deploys on every pull request, production on `main`. |
 | CI | **GitHub Actions** | Lint, type-check and build on every push and pull request. |
 
 ## Highlights
 
-- **Designed as an engineering datasheet.** The home page reads like page one of a component datasheet: features, a functional block diagram, application notes and a revision history. Dark mode redraws the same sheet as a blueprint.
-- **Architecture, not just screenshots.** Every project page has a system block diagram built from real HTML, so it stays readable for screen readers and search engines, and stacks vertically on phones.
+- **Quiet, text-first design.** Set in a serif with small mono labels, one rust accent, no gradients or animation. Projects are a plain list with real screenshots where they exist, and a light/dark toggle remembers your choice.
+- **Architecture, not just screenshots.** Every project page has a system diagram built from real HTML, so it stays readable for screen readers and search engines, and stacks vertically on phones.
 - **Content is data.** Projects, experience and awards live in typed files under [`src/content`](src/content); pages render from them.
-- **One application note per project** at `/work/[slug]`, statically generated, each with its own Open Graph image.
+- **One case study per project** at `/work/[slug]`, statically generated, each with its own Open Graph image.
 - **Secure contact form.** The public key can only `INSERT` into `contact_messages` (RLS + column-level grants), so it can never read messages back. Input is validated on the server with Zod, and a honeypot field filters bots.
 - **Videos load on demand.** `preload="none"` with a poster image, so nothing downloads until a visitor presses play.
 - **Accessible by default.** Skip link, visible focus states, labelled form errors announced with `aria-live`, `prefers-reduced-motion` respected, and no horizontal scrolling at 390 px.
@@ -30,14 +30,14 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 ```
 src/
   app/
-    page.tsx                    Home: title block, features, block diagram, application notes, revision history, contact
-    work/[slug]/page.tsx        Application note per project
+    page.tsx                    Home: intro, selected work, about, experience, contact
+    work/[slug]/page.tsx        Case study per project
     work/[slug]/opengraph-image.tsx
     actions/contact.ts          Server Action for the contact form
     opengraph-image.tsx, icon.tsx, sitemap.ts, robots.ts
-  components/                   Block diagram, video figure, contact form, header
+  components/                   Header, footer, diagram, video, contact form
   content/                      Projects, experience, awards and site config
-  lib/                          Supabase client (server-only), media URLs and the theme store
+  lib/                          Supabase client (server-only), media URLs, dates and the theme store
 supabase/migrations/            Database schema, RLS policies and the media bucket
 ```
 

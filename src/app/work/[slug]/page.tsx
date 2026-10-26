@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import { BlockDiagram } from "@/components/block-diagram";
-import { ArrowLeft, ArrowUpRight } from "@/components/icons";
 import { ProjectVideo } from "@/components/project-video";
 import { getProject, projects } from "@/content/projects";
 import { site } from "@/content/site";
+import { monthYear } from "@/lib/dates";
 import { mediaUrl } from "@/lib/media";
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
   const project = getProject(slug);
   if (!project) return {};
   return {
-    title: `${project.name} (${project.code})`,
+    title: project.name,
     description: project.summary,
     alternates: { canonical: `/work/${project.slug}` },
     openGraph: { title: `${project.name} · ${site.name}`, description: project.summary, url: `/work/${project.slug}` },
@@ -36,117 +36,90 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
   const prev = byCode[(i - 1 + byCode.length) % byCode.length];
   const next = byCode[(i + 1) % byCode.length];
   const hasVideo = Boolean(project.video && mediaUrl(project.video.file));
-  let figure = 0;
-  let section = 0;
-  const nextSection = () => String(++section).padStart(2, "0");
 
   return (
     <article>
-      <header className="pad grid-bg border-b border-hair pt-8 pb-10">
-        <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-[0.72rem] tracking-[0.08em] text-ink-2">
-          <Link href="/#projects" className="inline-flex items-center gap-2 text-ink no-underline hover:text-mark">
-            <ArrowLeft className="size-3.5" /> APPLICATION NOTES
-          </Link>
-          <span>APPLICATION NOTE {project.code} · REV {site.revision}</span>
-        </div>
-        <h1 className="mt-8 mb-0 font-cond text-[clamp(2.6rem,7vw,5rem)] leading-[0.95] font-bold tracking-[-0.01em] uppercase">{project.name}</h1>
-        <p className="mt-3 mb-0 max-w-[60ch] font-cond text-[clamp(1.15rem,2vw,1.4rem)] font-medium text-ink-2">{project.tagline}</p>
-        <div className="mt-5 flex flex-wrap gap-2 font-mono text-[0.72rem] tracking-wide">
-          <span className="border border-ink px-2 py-1">{project.kind.toUpperCase()}</span>
-          <span className="border border-ink px-2 py-1">{project.context.toUpperCase()}</span>
-          <span className="border border-ink px-2 py-1">{project.year}</span>
-          {project.award && <span className="border border-mark bg-mark px-2 py-1 text-[var(--on-mark)]">{project.award.toUpperCase()}</span>}
-        </div>
+      <header className="wrap pt-12 pb-10 sm:pt-16">
+        <Link href="/#work" className="a font-mono text-[0.78rem] text-ink-3">← All work</Link>
+        <h1 className="mt-8 mb-0 text-[clamp(2rem,5vw,2.9rem)]">{project.name}</h1>
+        <p className="mt-2 mb-0 max-w-[34em] text-[1.15rem] text-ink-2 italic">{project.tagline}</p>
+        <p className="meta mt-4 mb-0">
+          {project.kind} · {project.context} · {project.status}, {monthYear(project)}
+          {project.award && <span className="text-accent"> · {project.award}</span>}
+        </p>
       </header>
 
-      <section className="pad py-12" aria-labelledby="overview-h">
-        <SectionHead no={nextSection()} id="overview-h" title="Overview" aside="Specifications" />
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
-          <div className="min-w-0">
-            {project.story.map((s) => (
-              <p key={s.slice(0, 32)} className="mt-0 mb-4 max-w-[64ch] text-[1.05rem]">{s}</p>
-            ))}
-          </div>
-          <table className="spec self-start" aria-label="Specifications">
-            <tbody>
-              <tr><th scope="row">Platform</th><td>{project.kind}</td></tr>
-              <tr><th scope="row">Team</th><td>{project.team}</td></tr>
-              <tr><th scope="row">My role</th><td>{project.role}</td></tr>
-              <tr><th scope="row">Stack</th><td>{project.stack.join(", ")}</td></tr>
-              <tr><th scope="row">Status</th><td>{project.status} · {MONTHS[project.month - 1]} {project.year}</td></tr>
-              {project.award && <tr><th scope="row">Recognition</th><td className="font-semibold text-mark">{project.award}</td></tr>}
-              <tr>
-                <th scope="row">Source</th>
-                <td>
-                  {project.repo ? (
-                    <a href={project.repo} target="_blank" rel="noopener noreferrer" className="a inline-flex items-center gap-1">
-                      View on GitHub <ArrowUpRight className="size-3.5" />
-                    </a>
-                  ) : (
-                    "Private repository"
-                  )}
-                </td>
-              </tr>
-              {project.live && (
-                <tr><th scope="row">Live</th><td><a href={project.live} target="_blank" rel="noopener noreferrer" className="a">Open the site</a></td></tr>
-              )}
-            </tbody>
-          </table>
+      {(hasVideo || project.video?.poster) && (
+        <div className="wrap pb-12">
+          {hasVideo ? (
+            <ProjectVideo project={project} />
+          ) : (
+            <Image
+              src={project.video!.poster}
+              alt={`${project.name} screenshot`}
+              width={1280}
+              height={720}
+              priority
+              sizes="(min-width: 980px) 916px, 100vw"
+              className="block h-auto w-full border border-rule"
+            />
+          )}
         </div>
-      </section>
-
-      {hasVideo && (
-        <section className="pad pb-12" aria-labelledby="demo-h">
-          <SectionHead no={nextSection()} id="demo-h" title="Demonstration" />
-          <ProjectVideo project={project} figure={++figure} />
-        </section>
       )}
 
-      <section className="pad pb-12" aria-labelledby="system-h">
-        <SectionHead no={nextSection()} id="system-h" title="System block diagram" />
-        <figure className="figure m-0">
-          <BlockDiagram stages={project.diagram} label={`${project.name} system block diagram`} />
-          <figcaption><b>Figure {++figure}.</b>{project.name} at a glance, from the device to the data.</figcaption>
-        </figure>
-      </section>
-
-      <section className="pad pb-14" aria-labelledby="contrib-h">
-        <div className="grid gap-10 md:grid-cols-2">
-          <div>
-            <SectionHead no={nextSection()} id="contrib-h" title="My contribution" />
-            <ul className="bullets">
-              {project.contribution.map((c) => <li key={c}>{c}</li>)}
-            </ul>
-          </div>
-          <div>
-            <SectionHead no={nextSection()} id="features-h" title="Key features" />
-            <ul className="bullets">
-              {project.features.map((f) => <li key={f}>{f}</li>)}
-            </ul>
-          </div>
+      <Row label="Overview">
+        <div className="grid max-w-[34em] gap-4">
+          {project.story.map((s) => <p key={s.slice(0, 32)} className="m-0">{s}</p>)}
         </div>
-      </section>
+      </Row>
 
-      <nav aria-label="More application notes" className="grid border-t-2 border-ink sm:grid-cols-2">
-        <Link href={`/work/${prev.slug}`} className="pad block border-b border-hair py-5 text-ink no-underline hover:bg-fill sm:border-r sm:border-b-0">
-          <span className="mono-label">← Previous · {prev.code}</span>
-          <b className="mt-1 block font-cond text-xl font-semibold">{prev.name}</b>
-        </Link>
-        <Link href={`/work/${next.slug}`} className="pad block py-5 text-right text-ink no-underline hover:bg-fill">
-          <span className="mono-label">Next · {next.code} →</span>
-          <b className="mt-1 block font-cond text-xl font-semibold">{next.name}</b>
-        </Link>
+      <Row label="My part">
+        <p className="mt-0 mb-3 max-w-[34em]">
+          {project.team === "Solo" ? "I built this one on my own:" : `${project.role}. Team: ${project.team.toLowerCase()}.`}
+        </p>
+        <ul className="dash max-w-[34em]">
+          {project.contribution.map((c) => <li key={c}>{c}</li>)}
+        </ul>
+      </Row>
+
+      <Row label="Features">
+        <ul className="dash max-w-[34em]">
+          {project.features.map((f) => <li key={f}>{f}</li>)}
+        </ul>
+      </Row>
+
+      <Row label="How it fits together">
+        <BlockDiagram stages={project.diagram} label={`${project.name} system diagram`} />
+        <p className="meta mt-6 mb-0">
+          Built with {project.stack.join(", ")}.{" "}
+          {project.repo ? (
+            <a href={project.repo} target="_blank" rel="noopener noreferrer" className="a">Source on GitHub</a>
+          ) : (
+            "The source is in a private repository."
+          )}
+          {project.live && (
+            <> · <a href={project.live} target="_blank" rel="noopener noreferrer" className="a">Live site</a></>
+          )}
+        </p>
+      </Row>
+
+      <nav aria-label="More projects" className="wrap">
+        <div className="flex flex-wrap justify-between gap-4 border-t border-rule pt-8">
+          <Link href={`/work/${prev.slug}`} className="a">← {prev.name}</Link>
+          <Link href={`/work/${next.slug}`} className="a">{next.name} →</Link>
+        </div>
       </nav>
     </article>
   );
 }
 
-function SectionHead({ no, id, title, aside }: { no: string; id: string; title: string; aside?: string }) {
+function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="sec-head">
-      <span className="no">{no}</span>
-      <h2 id={id}>{title}</h2>
-      {aside && <span className="aside max-sm:hidden">{aside}</span>}
-    </div>
+    <section className="wrap">
+      <div className="row border-t border-rule pt-8 pb-12">
+        <h2 className="label m-0 pt-1.5 font-normal">{label}</h2>
+        <div className="min-w-0">{children}</div>
+      </div>
+    </section>
   );
 }
