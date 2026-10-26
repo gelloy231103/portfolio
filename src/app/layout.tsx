@@ -1,16 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { RevealObserver } from "@/components/reveal-observer";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { site, siteUrl } from "@/content/site";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-sans", display: "swap" });
-const plexCond = IBM_Plex_Sans_Condensed({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-plex-cond", display: "swap" });
-const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono", display: "swap" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-instrument", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: `${site.name} · ${site.role}`, template: `%s · ${site.name}` },
+  title: { default: `${site.name} · ${site.title}`, template: `%s · ${site.name}` },
   description: site.description,
   authors: [{ name: site.name, url: site.github }],
   openGraph: { type: "website", siteName: site.name, locale: "en_PH", url: "/" },
@@ -20,13 +22,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b1d35" },
+    { media: "(prefers-color-scheme: light)", color: "#fafaf8" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
 };
 
-// Applies the saved page style before first paint so there's no flash.
-const themeScript = `try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`;
+// Applies the saved theme before first paint so there's no flash, and marks JS as available for scroll reveals.
+const bootScript = `try{var d=document.documentElement;d.classList.add("js");var t=localStorage.getItem("theme");if(t==="dark"||t==="light")d.dataset.theme=t}catch(e){}`;
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -40,27 +42,19 @@ const personJsonLd = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${plexSans.variable} ${plexCond.variable} ${plexMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geist.variable} ${geistMono.variable} ${instrument.variable}`}>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       </head>
-      <body className="flex min-h-dvh flex-col">
-        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-ink focus:px-4 focus:py-2 focus:text-sheet">
+      <body className="flex min-h-dvh flex-col overflow-x-clip">
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bg">
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="sheet w-full flex-1">{children}</main>
-        <footer className="sheet w-full border-t-2 border-ink">
-          <div className="pad grid gap-2 py-4 font-mono text-[0.72rem] tracking-wide text-ink-2 sm:grid-cols-3">
-            <span>© {site.copyrightYear} {site.name}</span>
-            <span className="sm:text-center">
-              Next.js · Supabase · Vercel ·{" "}
-              <a href={`${site.github}/portfolio`} className="a">source</a>
-            </span>
-            <span className="sm:text-right">REV {site.revision}</span>
-          </div>
-        </footer>
+        <main id="main" className="w-full flex-1">{children}</main>
+        <SiteFooter />
+        <RevealObserver />
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CopyIcon } from "./icons";
+import { CheckIcon, CopyIcon, MailIcon } from "./icons";
 
 export function CopyEmail({ email }: { email: string }) {
   const [state, setState] = useState<"idle" | "copied" | "selected">("idle");
@@ -29,10 +29,13 @@ export function CopyEmail({ email }: { email: string }) {
   };
 
   return (
-    <button type="button" onClick={copy} className="btn w-full justify-between sm:w-auto">
-      <span ref={textRef} className="select-all">{email}</span>
-      <span className="inline-flex items-center gap-1.5 text-ink-2" aria-hidden="true">
-        {state === "copied" ? "Copied" : state === "selected" ? "Ctrl+C" : <CopyIcon />}
+    <button type="button" onClick={copy} className="btn h-auto min-h-11 justify-between py-2" title="Copy e-mail address">
+      <span className="inline-flex min-w-0 items-center gap-2.5">
+        <MailIcon />
+        <span ref={textRef} className="truncate select-all">{email}</span>
+      </span>
+      <span className={`inline-flex shrink-0 items-center gap-1.5 text-xs ${state === "idle" ? "text-ink-3" : "text-accent-ink"}`} aria-hidden="true">
+        {state === "copied" ? <><CheckIcon /> Copied</> : state === "selected" ? "Ctrl+C" : <CopyIcon />}
       </span>
       <span aria-live="polite" className="sr-only">
         {state === "copied" ? "E-mail address copied" : state === "selected" ? "E-mail selected; press Ctrl+C to copy" : ""}

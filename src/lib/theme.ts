@@ -1,4 +1,4 @@
-/** Page style store: "light" = datasheet, "dark" = blueprint. Backed by <html data-theme> and the OS preference. */
+/** Theme store. Backed by <html data-theme> and the OS preference. */
 export type Theme = "light" | "dark";
 
 const query = "(prefers-color-scheme: dark)";
@@ -9,7 +9,7 @@ export function getTheme(): Theme {
   return window.matchMedia(query).matches ? "dark" : "light";
 }
 
-/** On the server the theme is unknown; the switch renders with nothing selected until hydration. */
+/** On the server the theme is unknown; the toggle renders with no pressed state until hydration. */
 export function getServerTheme(): Theme | null {
   return null;
 }

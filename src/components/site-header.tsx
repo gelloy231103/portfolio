@@ -1,70 +1,72 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { site } from "@/content/site";
-import { getServerTheme, getTheme, setTheme, subscribeTheme, type Theme } from "@/lib/theme";
+import { getServerTheme, getTheme, setTheme, subscribeTheme } from "@/lib/theme";
+import { MoonIcon, SunIcon } from "./icons";
 
 const links = [
-  { href: "/#projects", label: "Projects" },
-  { href: "/#history", label: "History", hideOnPhone: true },
+  { href: "/#work", label: "Work" },
+  { href: "/#about", label: "About" },
+  { href: "/#experience", label: "Experience", hideOnPhone: true },
   { href: "/#contact", label: "Contact" },
 ];
 
 export function SiteHeader() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-[env(safe-area-inset-top,0px)] z-30 border-b-2 border-ink bg-sheet">
-      <div className="mx-auto flex max-w-[1120px] items-stretch">
-        <Link href="/" className="flex items-center gap-3 border-r border-hair py-2.5 pr-4 pl-[clamp(16px,4vw,48px)] no-underline" aria-label={`${site.name}, home`}>
-          <span className="grid h-8 w-11 place-items-center bg-ink font-mono text-[0.72rem] font-semibold tracking-wider text-sheet">{site.initials}</span>
-          <span className="hidden leading-tight sm:block">
-            <span className="block font-cond text-[0.98rem] font-semibold">{site.name}</span>
-            <span className="block font-mono text-[0.66rem] tracking-wide text-ink-2">DATASHEET · REV {site.revision}</span>
+    <header className="fixed inset-x-0 top-[max(env(safe-area-inset-top),12px)] z-40 px-3 sm:px-4">
+      <div
+        className={`mx-auto flex h-14 max-w-[1120px] items-center gap-2 rounded-full border pr-1.5 pl-2 transition-[background-color,border-color,box-shadow] duration-300 ${
+          scrolled
+            ? "border-line bg-surface/75 shadow-[var(--shadow)] backdrop-blur-xl backdrop-saturate-150"
+            : "border-transparent bg-transparent"
+        }`}
+      >
+        <Link href="/" className="group flex items-center gap-2.5 rounded-full py-1 pr-3 pl-1 no-underline" aria-label={`${site.name}, home`}>
+          <span className="grid size-9 place-items-center rounded-full bg-ink font-mono text-[0.7rem] font-semibold tracking-wider text-bg transition-colors group-hover:bg-accent group-hover:text-on-accent">
+            {site.initials}
           </span>
+          <span className="hidden text-[0.95rem] font-semibold tracking-tight text-ink md:block">{site.shortName}</span>
         </Link>
-        <nav aria-label="Sections" className="ml-auto flex items-stretch">
+        <nav aria-label="Sections" className="ml-auto flex items-center">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className={`flex items-center border-l border-hair px-3 font-mono text-[0.78rem] tracking-wide text-ink no-underline hover:bg-fill sm:px-4 ${l.hideOnPhone ? "max-sm:hidden" : ""}`}
+              className={`rounded-full px-2.5 py-1.5 text-[0.88rem] text-ink-2 no-underline transition-colors hover:bg-surface-2 hover:text-ink sm:px-3.5 ${l.hideOnPhone ? "max-sm:hidden" : ""}`}
             >
               {l.label}
             </Link>
           ))}
-          <ThemeSwitch />
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   );
 }
 
-/** Light = printed datasheet, dark = blueprint. */
-function ThemeSwitch() {
+function ThemeToggle() {
   const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
-  const choose = (next: Theme) => setTheme(next);
-
   return (
-    <div role="group" aria-label="Page style" className="flex items-stretch border-l border-hair pr-[clamp(16px,4vw,48px)]">
-      {(
-        [
-          ["light", "Datasheet", "Sheet"],
-          ["dark", "Blueprint", "Blue"],
-        ] as const
-      ).map(([value, label, short]) => (
-        <button
-          key={value}
-          type="button"
-          aria-pressed={theme === value}
-          onClick={() => choose(value)}
-          className={`cursor-pointer px-2.5 font-mono text-[0.72rem] tracking-wide transition-colors sm:px-3 ${
-            theme === value ? "bg-ink text-sheet" : "text-ink-2 hover:text-ink"
-          }`}
-        >
-          <span className="max-sm:hidden">{label}</span>
-          <span className="sm:hidden">{short}</span>
-        </button>
-      ))}
-    </div>
+    <button
+      type="button"
+      onClick={() => setTheme(getTheme() === "dark" ? "light" : "dark")}
+      aria-label="Dark theme"
+      aria-pressed={theme === null ? undefined : theme === "dark"}
+      className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-line bg-surface text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+    >
+      <MoonIcon className="icon-moon size-[18px]" />
+      <SunIcon className="icon-sun size-[18px]" />
+    </button>
   );
 }

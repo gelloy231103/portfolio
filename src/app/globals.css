@@ -1,138 +1,203 @@
 @import "tailwindcss";
 
 /*
-  Concept: the portfolio is an engineering datasheet.
-  Light theme = printed datasheet (ruled tables, figures, red revision marks).
-  Dark theme  = the same sheet as a blueprint (navy paper, pale linework).
+  Design tokens. One set drives both themes; components only use these names.
+  Light = warm paper with an indigo accent. Dark = near-black with a soft periwinkle accent.
 */
 :root {
-  --paper: #eef1f3;     /* desk behind the sheet */
-  --sheet: #ffffff;     /* the document itself */
-  --ink: #101a27;       /* body text, heavy rules */
-  --ink-2: #47566a;     /* secondary text */
-  --hair: #cfd7e0;      /* hairline rules */
-  --grid: #e6ebf0;      /* faint engineering grid */
-  --mark: #c4161c;      /* revision / emphasis mark */
-  --link: #1d4ed8;
-  --fill: #f4f6f8;      /* table header / block fill */
-  --on-mark: #ffffff;
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-2: #f3f3f0;
+  --ink: #0d0e12;
+  --ink-2: #4f525b;
+  --ink-3: #6b6f79;
+  --line: #e8e7e2;
+  --line-strong: #d7d6d0;
+  --accent: #4f46e5;
+  --accent-ink: #4338ca;
+  --accent-soft: #eef0ff;
+  --on-accent: #ffffff;
+  --glow: rgba(99, 102, 241, 0.16);
+  --gold: #a16207;
+  --shadow: 0 1px 2px rgba(16, 17, 22, 0.04), 0 8px 24px -12px rgba(16, 17, 22, 0.12);
+  --shadow-lg: 0 2px 4px rgba(16, 17, 22, 0.04), 0 24px 48px -20px rgba(16, 17, 22, 0.22);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #071426; --sheet: #0b1d35; --ink: #e3edf8; --ink-2: #9db4cc; --hair: #2a4a6e; --grid: #12294a;
-    --mark: #ff7a6b; --link: #8cc4ff; --fill: #0f2542; --on-mark: #071426;
+    --bg: #09090b; --surface: #111114; --surface-2: #18181c; --ink: #ededf0; --ink-2: #a3a3ad; --ink-3: #8a8a94;
+    --line: #222227; --line-strong: #303037; --accent: #8b93ff; --accent-ink: #a5abff; --accent-soft: rgba(139, 147, 255, 0.12);
+    --on-accent: #0b0b10; --glow: rgba(139, 147, 255, 0.14); --gold: #fcd34d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 24px 48px -20px rgba(0, 0, 0, 0.8);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #071426; --sheet: #0b1d35; --ink: #e3edf8; --ink-2: #9db4cc; --hair: #2a4a6e; --grid: #12294a;
-  --mark: #ff7a6b; --link: #8cc4ff; --fill: #0f2542; --on-mark: #071426;
+  --bg: #09090b; --surface: #111114; --surface-2: #18181c; --ink: #ededf0; --ink-2: #a3a3ad; --ink-3: #8a8a94;
+  --line: #222227; --line-strong: #303037; --accent: #8b93ff; --accent-ink: #a5abff; --accent-soft: rgba(139, 147, 255, 0.12);
+  --on-accent: #0b0b10; --glow: rgba(139, 147, 255, 0.14); --gold: #fcd34d;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 24px 48px -20px rgba(0, 0, 0, 0.8);
   color-scheme: dark;
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-sheet: var(--sheet);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
-  --color-hair: var(--hair);
-  --color-mark: var(--mark);
-  --color-link: var(--link);
-  --color-fill: var(--fill);
-  --font-sans: var(--font-plex-sans), "Segoe UI", system-ui, sans-serif;
-  --font-cond: var(--font-plex-cond), "Arial Narrow", "Segoe UI", sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, Consolas, monospace;
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
 }
 
 html { scroll-behavior: smooth; }
 body {
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
-:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
-::selection { background: var(--mark); color: var(--on-mark); }
-h1, h2, h3 { font-family: var(--font-cond); text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--accent); color: var(--on-accent); }
+h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }
+p { text-wrap: pretty; }
 
-/* The sheet: one document with a faint engineering grid in the margins. */
-.sheet {
-  max-width: 1120px;
-  margin-inline: auto;
-  background: var(--sheet);
-  border-inline: 1px solid var(--hair);
+/* Layout */
+.container-x { width: 100%; max-width: 1160px; margin-inline: auto; padding-inline: clamp(16px, 5vw, 40px); }
+.section { padding-block: clamp(72px, 10vw, 128px); }
+
+/* Typography helpers */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
 }
-.grid-bg {
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
+.eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; }
+.serif { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+.h-section { font-size: clamp(2rem, 4.4vw, 3.25rem); line-height: 1.05; font-weight: 600; margin: 0; }
+.lead { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--ink-2); }
+
+/* Backgrounds */
+.dot-grid {
+  background-image: radial-gradient(circle at 1px 1px, var(--line-strong) 1px, transparent 0);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
 }
-.pad { padding-inline: clamp(16px, 4vw, 48px); }
+.glow { background: radial-gradient(closest-side, var(--glow), transparent); }
 
-/* Section heads: number + title + full-width heavy rule, like a datasheet. */
-.sec-head {
-  display: flex; align-items: baseline; gap: 14px;
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: 6px; margin-bottom: 20px;
+/* Surfaces */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
 }
-.sec-head .no { font-family: var(--font-mono); font-size: 0.8rem; color: var(--mark); font-weight: 600; }
-.sec-head h2 { font-size: clamp(1.25rem, 2.4vw, 1.6rem); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin: 0; }
-.sec-head .aside { margin-left: auto; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-2); }
+.card-hover { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s, border-color 0.35s; }
+.card-hover:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--line-strong); }
 
-.mono-label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
-
-/* Ruled data tables */
-.spec { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-.spec th, .spec td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--hair); }
-.spec thead th { background: var(--fill); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); font-weight: 500; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
-.spec tbody th { font-weight: 500; color: var(--ink-2); width: 34%; }
-.spec tr:last-child td, .spec tr:last-child th { border-bottom: 1px solid var(--ink); }
-
-/* Square bullets, like a feature list on page one of a datasheet */
-.bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.bullets li { display: grid; grid-template-columns: 14px 1fr; gap: 10px; }
-.bullets li::before { content: ""; width: 6px; height: 6px; margin-top: 10px; background: var(--ink); }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2);
+  font-size: 0.78rem; line-height: 1.4; white-space: nowrap;
+}
+.chip-gold { background: color-mix(in srgb, var(--gold) 12%, transparent); color: var(--gold); border-color: color-mix(in srgb, var(--gold) 28%, transparent); }
+.chip-accent { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
 
 /* Links and buttons */
-.a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
-.a:hover { text-decoration-thickness: 2px; }
+.a { color: var(--accent-ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); text-underline-offset: 3px; transition: text-decoration-color 0.2s; }
+.a:hover { text-decoration-color: currentColor; }
 .btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; font-family: var(--font-mono); font-size: 0.82rem;
-  letter-spacing: 0.02em; border: 1px solid var(--ink); background: var(--sheet); color: var(--ink); text-decoration: none; cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px;
+  font-size: 0.92rem; font-weight: 500; text-decoration: none; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.btn:hover { background: var(--ink); color: var(--sheet); }
-.btn-solid { background: var(--ink); color: var(--sheet); }
-.btn-solid:hover { background: var(--mark); border-color: var(--mark); color: var(--on-mark); }
-.btn svg { width: 14px; height: 14px; }
+.btn:hover { border-color: var(--ink-3); }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn-primary:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); box-shadow: 0 8px 24px -8px var(--accent); }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn .arrow { transition: transform 0.2s; }
+.btn:hover .arrow { transform: translateX(3px); }
 
-/* Revision mark: the red tick in the margin used to flag what changed */
-.rev-mark { position: relative; }
-.rev-mark::before { content: ""; position: absolute; left: calc(-1 * clamp(16px, 4vw, 48px) + 8px); top: 4px; bottom: 4px; width: 3px; background: var(--mark); }
+/* Form fields */
+.field {
+  width: 100%; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink);
+  padding: 12px 14px; font: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea.field { resize: vertical; min-height: 140px; }
+.field::placeholder { color: var(--ink-3); }
+.field:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.field[aria-invalid="true"] { border-color: #dc2626; }
 
-/* Block diagram */
+/* Check list */
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.checks li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; }
+.checks li::before {
+  content: ""; width: 22px; height: 22px; margin-top: 2px; border-radius: 999px; background-color: var(--accent-soft);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+  background-size: 12px; background-position: center; background-repeat: no-repeat;
+}
+
+/* Process diagram */
 .diagram { display: grid; grid-template-columns: var(--cols); gap: 0; align-items: stretch; }
-@media (max-width: 720px) { .diagram { grid-template-columns: minmax(0,1fr); } }
+@media (max-width: 760px) { .diagram { grid-template-columns: minmax(0, 1fr); } }
 .stage { display: grid; align-content: center; gap: 10px; }
-.stage .cap { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); text-align: center; }
-.d-block { border: 1.5px solid var(--ink); background: var(--sheet); padding: 10px 12px; text-align: center; font-size: 0.88rem; line-height: 1.35; font-weight: 500; }
+.stage .cap { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.stage .cap i { font-style: normal; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-size: 0.66rem; }
+.d-block {
+  border: 1px solid var(--line-strong); background: var(--surface); border-radius: 12px; padding: 11px 14px; text-align: center;
+  font-size: 0.88rem; line-height: 1.35; font-weight: 500; box-shadow: var(--shadow);
+}
 .wire { position: relative; min-width: 28px; min-height: 28px; }
-.wire::before { content: ""; position: absolute; left: 0; right: 7px; top: 50%; border-top: 1.5px solid var(--ink); }
-.wire::after { content: ""; position: absolute; right: 0; top: calc(50% - 5px); border-left: 8px solid var(--ink); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
-@media (max-width: 720px) {
-  .wire::before { left: 50%; right: auto; top: 0; bottom: 7px; border-top: 0; border-left: 1.5px solid var(--ink); }
-  .wire::after { right: auto; left: calc(50% - 5px); top: auto; bottom: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid var(--ink); border-bottom: 0; }
+.wire::before { content: ""; position: absolute; left: 4px; right: 10px; top: 50%; border-top: 1.5px dashed var(--line-strong); }
+.wire::after { content: ""; position: absolute; right: 2px; top: calc(50% - 4px); width: 8px; height: 8px; border-top: 1.5px solid var(--ink-3); border-right: 1.5px solid var(--ink-3); transform: rotate(45deg); }
+@media (max-width: 760px) {
+  .wire::before { left: 50%; right: auto; top: 4px; bottom: 10px; border-top: 0; border-left: 1.5px dashed var(--line-strong); }
+  .wire::after { right: auto; left: calc(50% - 4px); top: auto; bottom: 4px; transform: rotate(135deg); }
 }
 
-/* Figures */
-.figure { border: 1px solid var(--ink); background: var(--sheet); }
-.figure figcaption { border-top: 1px solid var(--ink); padding: 8px 12px; font-size: 0.85rem; color: var(--ink-2); }
-.figure figcaption b { color: var(--ink); font-family: var(--font-mono); font-weight: 600; margin-right: 6px; }
+/* Marquee */
+.marquee { mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); overflow: hidden; }
+.marquee-track { display: flex; width: max-content; gap: 12px; animation: marquee 40s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes marquee { to { transform: translateX(calc(-50% - 6px)); } }
+
+/* Entrance motion. Hero animates with CSS alone; later sections reveal on scroll once JS is running. */
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+.js [data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: var(--d, 0ms); }
+.js [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Theme toggle icons follow the active theme without waiting for hydration. */
+.icon-sun { display: none; }
+.icon-moon { display: block; }
+:root[data-theme="dark"] .icon-sun { display: block; }
+:root[data-theme="dark"] .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .icon-sun { display: block; }
+  :root:not([data-theme="light"]) .icon-moon { display: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+@media print {
+  .js [data-reveal] { opacity: 1; transform: none; }
 }

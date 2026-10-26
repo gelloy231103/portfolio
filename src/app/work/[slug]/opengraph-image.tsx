@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getProject, projects } from "@/content/projects";
 import { site } from "@/content/site";
 
-export const alt = "Application note preview";
+export const alt = "Project preview";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -10,10 +10,9 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-const grid =
-  "linear-gradient(#12294a 1px, transparent 1px), linear-gradient(90deg, #12294a 1px, transparent 1px)";
+const dots = "radial-gradient(circle at 1px 1px, #303037 1px, transparent 0)";
 
-/** Project previews use the blueprint palette so they read as a set with the site preview. */
+/** Project previews use the dark palette, tinted with each project's colour. */
 export default async function ProjectOpenGraphImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = getProject(slug);
@@ -21,21 +20,23 @@ export default async function ProjectOpenGraphImage({ params }: { params: Promis
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#0b1d35", backgroundImage: grid, backgroundSize: "24px 24px", color: "#e3edf8", padding: 56 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 22, color: "#9db4cc", borderBottom: "3px solid #e3edf8", paddingBottom: 14 }}>
-          <span>APPLICATION NOTE {p.code}</span>
-          <span>{site.name.toUpperCase()}</span>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#09090b", backgroundImage: dots, backgroundSize: "22px 22px", color: "#ededf0", padding: 72, position: "relative" }}>
+        <div style={{ position: "absolute", top: -280, left: -120, width: 900, height: 700, borderRadius: 700, background: `radial-gradient(circle, ${p.tint}55 0%, ${p.tint}00 70%)`, display: "flex" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#a3a3ad" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ width: 14, height: 14, borderRadius: 14, background: p.tint }} />
+            {p.kind} · {p.context}
+          </span>
+          <span>{site.name}</span>
         </div>
-        <div style={{ display: "flex", marginTop: 52, fontSize: 112, fontWeight: 700, lineHeight: 1, letterSpacing: -2 }}>{p.name.toUpperCase()}</div>
-        <div style={{ display: "flex", marginTop: 20, fontSize: 34, color: "#9db4cc", maxWidth: 1050 }}>{p.tagline}</div>
-        {p.award && (
-          <div style={{ display: "flex", marginTop: 24 }}>
-            <span style={{ background: "#ff7a6b", color: "#071426", padding: "6px 14px", fontSize: 24, fontWeight: 600 }}>{p.award.toUpperCase()}</span>
-          </div>
-        )}
+        <div style={{ display: "flex", marginTop: 72, fontSize: 120, fontWeight: 700, lineHeight: 1, letterSpacing: -5 }}>{p.name}</div>
+        <div style={{ display: "flex", marginTop: 24, fontSize: 36, color: "#a3a3ad", maxWidth: 1000 }}>{p.tagline}</div>
         <div style={{ display: "flex", marginTop: "auto", gap: 12 }}>
-          {[p.kind, ...p.stack].slice(0, 5).map((t) => (
-            <span key={t} style={{ border: "2px solid #8cc4ff", color: "#8cc4ff", padding: "6px 12px", fontSize: 22 }}>{t}</span>
+          {p.award && (
+            <span style={{ display: "flex", background: "#fcd34d", color: "#09090b", borderRadius: 999, padding: "8px 18px", fontSize: 22, fontWeight: 600 }}>{p.award.split(",")[0]}</span>
+          )}
+          {p.stack.slice(0, 4).map((t) => (
+            <span key={t} style={{ display: "flex", border: "1px solid #303037", background: "#111114", borderRadius: 999, padding: "8px 18px", fontSize: 22, color: "#ededf0" }}>{t}</span>
           ))}
         </div>
       </div>

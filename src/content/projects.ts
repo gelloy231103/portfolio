@@ -25,6 +25,8 @@ export type Project = {
   diagram: DiagramStage[];
   repo?: string;
   live?: string;
+  /** Brand colour for the project's cover art and accents. */
+  tint: string;
   /** Demo video stored in the Supabase "media" bucket, with a poster in /public/posters. */
   video?: { file: string; poster: string; note?: string };
 };
@@ -32,6 +34,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: "sensai",
+    tint: "#0ea5e9",
     code: "AN-01",
     name: "SensAi",
     tagline: "Learn American Sign Language with an AI conversation partner",
@@ -75,6 +78,7 @@ export const projects: Project[] = [
   },
   {
     slug: "suki",
+    tint: "#16a34a",
     code: "AN-02",
     name: "Suki",
     tagline: "A farmer-to-consumer marketplace",
@@ -109,6 +113,7 @@ export const projects: Project[] = [
   },
   {
     slug: "nutriventure",
+    tint: "#d97706",
     code: "AN-03",
     name: "NutriVenture",
     tagline: "A Unity adventure about nutrition. I built Kingdom 4, Allergia",
@@ -148,6 +153,7 @@ export const projects: Project[] = [
   },
   {
     slug: "civiq",
+    tint: "#7c3aed",
     code: "AN-04",
     name: "CivIQ",
     tagline: "Flashcards where you highlight the answer inside a sentence",
@@ -180,6 +186,7 @@ export const projects: Project[] = [
   },
   {
     slug: "vow-and-verse",
+    tint: "#e11d48",
     code: "AN-05",
     name: "Vow & Verse",
     tagline: "Invitation websites with checkout and RSVPs",
