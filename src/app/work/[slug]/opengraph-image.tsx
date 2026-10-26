@@ -10,6 +10,7 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
+/** Each preview uses the project's own panel colours, like its case study header. */
 export default async function ProjectOpenGraphImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = getProject(slug);
@@ -17,14 +18,15 @@ export default async function ProjectOpenGraphImage({ params }: { params: Promis
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#f7f6f2", color: "#1c1b18", padding: 80 }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 96, lineHeight: 1.05 }}>{p.name}</div>
-          <div style={{ fontSize: 40, color: "#57544c", marginTop: 24, maxWidth: 1000 }}>{p.tagline}</div>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: p.panel.bg, color: p.panel.fg, padding: 80 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, opacity: 0.75 }}>
+          <span>{`${p.kind} · ${p.context}`}</span>
+          <span>{site.shortName}</span>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, color: "#6f6b62", borderTop: "2px solid #dddad1", paddingTop: 24 }}>
-          <span>{p.kind} · {p.stack.slice(0, 3).join(", ")}</span>
-          <span>{site.name}</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: 132, fontWeight: 700, lineHeight: 0.95, letterSpacing: -6 }}>{p.name}</div>
+          <div style={{ fontSize: 38, marginTop: 24, opacity: 0.85, maxWidth: 1000 }}>{p.tagline}</div>
+          {p.award && <div style={{ display: "flex", fontSize: 26, marginTop: 28, fontWeight: 700 }}>{p.award}</div>}
         </div>
       </div>
     ),

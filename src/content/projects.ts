@@ -25,6 +25,13 @@ export type Project = {
   diagram: DiagramStage[];
   repo?: string;
   live?: string;
+  /** Colours for this project's showcase panel and case-study header. */
+  panel: { bg: string; fg: string };
+  /**
+   * Extra screenshots shown on the case study, stored under /public/screenshots/<slug>/.
+   * The first one is also used as the cover when the project has no demo poster.
+   */
+  gallery?: { src: string; alt: string }[];
   /** Demo video stored in the Supabase "media" bucket, with a poster in /public/posters. */
   video?: { file: string; poster: string; note?: string };
 };
@@ -32,6 +39,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: "sensai",
+    panel: { bg: "#e4f0fa", fg: "#0d2233" },
     code: "AN-01",
     name: "SensAi",
     tagline: "Learn American Sign Language with an AI conversation partner",
@@ -75,6 +83,7 @@ export const projects: Project[] = [
   },
   {
     slug: "suki",
+    panel: { bg: "#e8f1e1", fg: "#17301a" },
     code: "AN-02",
     name: "Suki",
     tagline: "A farmer-to-consumer marketplace",
@@ -109,6 +118,7 @@ export const projects: Project[] = [
   },
   {
     slug: "nutriventure",
+    panel: { bg: "#2b2a22", fg: "#f3efe2" },
     code: "AN-03",
     name: "NutriVenture",
     tagline: "A Unity adventure about nutrition. I built Kingdom 4, Allergia",
@@ -148,6 +158,7 @@ export const projects: Project[] = [
   },
   {
     slug: "civiq",
+    panel: { bg: "#ebe7fa", fg: "#221a44" },
     code: "AN-04",
     name: "CivIQ",
     tagline: "Flashcards where you highlight the answer inside a sentence",
@@ -180,6 +191,7 @@ export const projects: Project[] = [
   },
   {
     slug: "vow-and-verse",
+    panel: { bg: "#f7e8e8", fg: "#3d1219" },
     code: "AN-05",
     name: "Vow & Verse",
     tagline: "Invitation websites with checkout and RSVPs",
@@ -214,6 +226,20 @@ export const projects: Project[] = [
 
 export function getProject(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
+}
+
+/** Order for the home page showcase: strongest and most visual work first. */
+const SHOWCASE = ["nutriventure", "sensai", "vow-and-verse", "suki", "civiq"];
+export const projectsShowcase = [...projects].sort((a, b) => rank(a.slug) - rank(b.slug));
+function rank(slug: string): number {
+  const i = SHOWCASE.indexOf(slug);
+  return i === -1 ? SHOWCASE.length : i;
+}
+
+/** The image that represents a project: its demo poster, else its first screenshot. */
+export function coverImage(p: Project): { src: string; alt: string } | undefined {
+  if (p.video?.poster) return { src: p.video.poster, alt: `${p.name} demo` };
+  return p.gallery?.[0];
 }
 
 /** Newest first, for listings. */

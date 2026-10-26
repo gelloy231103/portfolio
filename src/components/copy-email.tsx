@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { CheckIcon, CopyIcon } from "./icons";
 
+/** E-mail address as a mailto link, with a button that copies it. Used on the inverted contact block. */
 export function CopyEmail({ email }: { email: string }) {
   const [state, setState] = useState<"idle" | "copied" | "selected">("idle");
   const textRef = useRef<HTMLSpanElement>(null);
@@ -28,16 +30,20 @@ export function CopyEmail({ email }: { email: string }) {
   };
 
   return (
-    <p className="m-0 font-mono text-[0.85rem]">
-      <a href={`mailto:${email}`} className="a">
+    <div className="flex flex-wrap items-center gap-3">
+      <a href={`mailto:${email}`} className="u text-[clamp(1.05rem,2vw,1.3rem)] font-semibold break-all">
         <span ref={textRef}>{email}</span>
-      </a>{" "}
-      <button type="button" onClick={copy} className="a cursor-pointer bg-transparent p-0 text-ink-3">
-        {state === "copied" ? "copied" : state === "selected" ? "press Ctrl+C" : "copy"}
+      </a>
+      <button
+        type="button"
+        onClick={copy}
+        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-current/25 px-3 py-1.5 text-sm opacity-80 hover:opacity-100"
+      >
+        {state === "copied" ? <><CheckIcon className="size-4" /> Copied</> : state === "selected" ? "Press Ctrl+C" : <><CopyIcon className="size-4" /> Copy</>}
       </button>
       <span aria-live="polite" className="sr-only">
         {state === "copied" ? "E-mail address copied" : state === "selected" ? "E-mail selected; press Ctrl+C to copy" : ""}
       </span>
-    </p>
+    </div>
   );
 }
