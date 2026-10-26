@@ -2,8 +2,9 @@ export const site = {
   name: "Louise Angello Cabaña",
   /** Short form used in compact places (header mark, tab titles). */
   initials: "LAC",
-  /** Friendly name for the header and casual places. */
-  shortName: "Louise Cabaña",
+  /** What people call me; used in the header and the intro. */
+  nickname: "Loy",
+  shortName: "Loy Cabaña",
   /** One-line professional title used in page titles and previews. */
   title: "Full-stack Developer",
   role: "Computer Programmer III",

@@ -10,9 +10,6 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-const dots = "radial-gradient(circle at 1px 1px, #303037 1px, transparent 0)";
-
-/** Project previews use the dark palette, tinted with each project's colour. */
 export default async function ProjectOpenGraphImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = getProject(slug);
@@ -20,24 +17,14 @@ export default async function ProjectOpenGraphImage({ params }: { params: Promis
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#09090b", backgroundImage: dots, backgroundSize: "22px 22px", color: "#ededf0", padding: 72, position: "relative" }}>
-        <div style={{ position: "absolute", top: -280, left: -120, width: 900, height: 700, borderRadius: 700, background: `radial-gradient(circle, ${p.tint}55 0%, ${p.tint}00 70%)`, display: "flex" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#a3a3ad" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ width: 14, height: 14, borderRadius: 14, background: p.tint }} />
-            {p.kind} · {p.context}
-          </span>
-          <span>{site.name}</span>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#f7f6f2", color: "#1c1b18", padding: 80 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ fontSize: 96, lineHeight: 1.05 }}>{p.name}</div>
+          <div style={{ fontSize: 40, color: "#57544c", marginTop: 24, maxWidth: 1000 }}>{p.tagline}</div>
         </div>
-        <div style={{ display: "flex", marginTop: 72, fontSize: 120, fontWeight: 700, lineHeight: 1, letterSpacing: -5 }}>{p.name}</div>
-        <div style={{ display: "flex", marginTop: 24, fontSize: 36, color: "#a3a3ad", maxWidth: 1000 }}>{p.tagline}</div>
-        <div style={{ display: "flex", marginTop: "auto", gap: 12 }}>
-          {p.award && (
-            <span style={{ display: "flex", background: "#fcd34d", color: "#09090b", borderRadius: 999, padding: "8px 18px", fontSize: 22, fontWeight: 600 }}>{p.award.split(",")[0]}</span>
-          )}
-          {p.stack.slice(0, 4).map((t) => (
-            <span key={t} style={{ display: "flex", border: "1px solid #303037", background: "#111114", borderRadius: 999, padding: "8px 18px", fontSize: 22, color: "#ededf0" }}>{t}</span>
-          ))}
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, color: "#6f6b62", borderTop: "2px solid #dddad1", paddingTop: 24 }}>
+          <span>{p.kind} · {p.stack.slice(0, 3).join(", ")}</span>
+          <span>{site.name}</span>
         </div>
       </div>
     ),

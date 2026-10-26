@@ -9,15 +9,14 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 | Layer | Choice | Why |
 | --- | --- | --- |
 | Framework | **Next.js 16** (App Router, React 19, TypeScript, Cache Components) | Every page is prerendered at build time; the contact form uses a Server Action. |
-| Styling | **Tailwind CSS 4** + CSS custom properties, Geist + Instrument Serif | One token set drives both light and dark themes. |
+| Styling | **Tailwind CSS 4** + CSS custom properties, Newsreader + IBM Plex Mono | One small token set drives both light and dark themes. |
 | Data | **Supabase** (Postgres + Storage) | Contact messages go to a table protected by Row Level Security; demo videos are served from a public Storage bucket. |
 | Hosting | **Vercel** | Preview deploys on every pull request, production on `main`. |
 | CI | **GitHub Actions** | Lint, type-check and build on every push and pull request. |
 
 ## Highlights
 
-- **Editorial, modern design.** A clean type-led layout with a single accent colour, project cards with cover art (demo posters, or generated covers in each project's colour), a capabilities section, an experience timeline and a light/dark toggle that remembers your choice.
-- **Subtle motion.** The hero animates in with CSS alone; later sections fade in as they scroll into view. All motion is turned off under `prefers-reduced-motion`.
+- **Quiet, text-first design.** Set in a serif with small mono labels, one rust accent, no gradients or animation. Projects are a plain list with real screenshots where they exist, and a light/dark toggle remembers your choice.
 - **Architecture, not just screenshots.** Every project page has a system diagram built from real HTML, so it stays readable for screen readers and search engines, and stacks vertically on phones.
 - **Content is data.** Projects, experience and awards live in typed files under [`src/content`](src/content); pages render from them.
 - **One case study per project** at `/work/[slug]`, statically generated, each with its own Open Graph image.
@@ -31,12 +30,12 @@ Personal portfolio of **Louise Angello Cabaña**, Computer Programmer III at the
 ```
 src/
   app/
-    page.tsx                    Home: hero, selected work, what I do, experience, contact
+    page.tsx                    Home: intro, selected work, about, experience, contact
     work/[slug]/page.tsx        Case study per project
     work/[slug]/opengraph-image.tsx
     actions/contact.ts          Server Action for the contact form
     opengraph-image.tsx, icon.tsx, sitemap.ts, robots.ts
-  components/                   Header, footer, project cover, diagram, video, contact form, scroll reveal
+  components/                   Header, footer, diagram, video, contact form
   content/                      Projects, experience, awards and site config
   lib/                          Supabase client (server-only), media URLs, dates and the theme store
 supabase/migrations/            Database schema, RLS policies and the media bucket
