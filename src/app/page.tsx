@@ -3,9 +3,9 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/contact-form";
 import { CopyEmail } from "@/components/copy-email";
-import { ArrowRight, GitHubIcon } from "@/components/icons";
+import { ArrowRight, ArrowUpRight, GitHubIcon } from "@/components/icons";
 import { WorkShowcase, type ShowcaseItem } from "@/components/work-showcase";
-import { credentials } from "@/content/credentials";
+import { awards, certifications, fullName } from "@/content/credentials";
 import { experience } from "@/content/experience";
 import { coverImage, projects, projectsShowcase } from "@/content/projects";
 import { site } from "@/content/site";
@@ -24,7 +24,8 @@ const toolGroups = [
 export default function HomePage() {
   const years = projects.map((p) => p.year);
   const range = `${Math.min(...years)} to ${Math.max(...years)}`;
-  const award = credentials.find((c) => c.kind === "Award");
+  const award = awards[0];
+  const issuers = Array.from(new Set(certifications.map((c) => c.issuer)));
   // Up to three projects with real screenshots for the hero collage.
   const collage = projectsShowcase.filter((p) => coverImage(p)).slice(0, 3);
   const showcase: ShowcaseItem[] = projectsShowcase.map((p) => {
@@ -73,15 +74,23 @@ export default function HomePage() {
             {award && (
               <div>
                 <dt className="sr-only">Award</dt>
-                <dd className="m-0 font-semibold text-ink">{award.title.split(",")[0].replace(" Finalist", "")}</dd>
-                <dd className="m-0 text-ink-3">{award.title.split(",")[1]?.replace(/Season (\d+)/, "S$1").trim()}</dd>
+                <dd className="m-0 font-semibold text-ink">{award.name.split(",")[0].replace(" Finalist", "")}</dd>
+                <dd className="m-0 text-ink-3">{award.name.split(",")[1]?.replace(/Season (\d+)/, "S$1").trim()}</dd>
               </div>
             )}
-            <div>
-              <dt className="sr-only">Scope</dt>
-              <dd className="m-0 font-semibold text-ink">End to end</dd>
-              <dd className="m-0 text-ink-3">UI, data, payments</dd>
-            </div>
+            {certifications.length > 0 ? (
+              <div>
+                <dt className="sr-only">Certifications</dt>
+                <dd className="m-0 font-semibold text-ink">{certifications.length} certifications</dd>
+                <dd className="m-0 text-ink-3">{issuers.join(" & ")}</dd>
+              </div>
+            ) : (
+              <div>
+                <dt className="sr-only">Scope</dt>
+                <dd className="m-0 font-semibold text-ink">End to end</dd>
+                <dd className="m-0 text-ink-3">UI, data, payments</dd>
+              </div>
+            )}
           </dl>
         </div>
 
@@ -119,6 +128,40 @@ export default function HomePage() {
         <WorkShowcase items={showcase} />
       </section>
 
+      {/* Certifications */}
+      {certifications.length > 0 && (
+        <section id="certifications" className="wrap scroll-mt-4 pt-20 sm:pt-28" aria-labelledby="certs-h">
+          <div className="mb-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 sm:mb-10">
+            <h2 id="certs-h" className="m-0 text-[clamp(2.2rem,4.5vw,3rem)]">Certifications</h2>
+            {site.credly && (
+              <a href={site.credly} target="_blank" rel="noopener noreferrer" className="a inline-flex items-center gap-1.5 text-ink-2">
+                Badges on Credly <ArrowUpRight className="size-4" />
+              </a>
+            )}
+          </div>
+          <ul className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            {certifications.map((c) => (
+              <li key={fullName(c)} className="flex flex-col rounded-2xl border border-line p-6 transition-colors hover:border-ink-3">
+                <span className="kicker text-ink-3">{c.issuer}</span>
+                {c.series && <span className="mt-4 text-sm text-ink-2">{c.series}</span>}
+                <h3 className={`${c.series ? "mt-1" : "mt-4"} mb-0 font-sans text-lg leading-snug font-semibold tracking-normal`}>{c.name}</h3>
+                <p className="mt-auto mb-0 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 pt-6 text-sm text-ink-3">
+                  <span>
+                    <time dateTime={c.date}>{formatMonth(c.date)}</time>
+                    {c.expires && <> · valid until <time dateTime={c.expires}>{formatMonth(c.expires)}</time></>}
+                  </span>
+                  {c.url && (
+                    <a href={c.url} target="_blank" rel="noopener noreferrer" aria-label={`Verify ${fullName(c)}`} className="a inline-flex items-center gap-1 font-medium text-ink">
+                      Verify <ArrowUpRight className="size-3.5" />
+                    </a>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {/* About */}
       <section id="about" className="wrap scroll-mt-4 py-20 sm:py-28" aria-labelledby="about-h">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.5fr] lg:gap-20">
@@ -153,11 +196,11 @@ export default function HomePage() {
                   <span><b className="font-semibold">{r.title}</b>, {r.organization}</span>
                 </li>
               ))}
-              {credentials.map((c) => (
-                <li key={c.title} className="grid gap-x-6 border-b border-line py-4 sm:grid-cols-[120px_1fr]">
+              {awards.map((c) => (
+                <li key={c.name} className="grid gap-x-6 border-b border-line py-4 sm:grid-cols-[120px_1fr]">
                   <time dateTime={c.date} className="text-ink-3">{formatMonth(c.date)}</time>
                   <span>
-                    <b className="font-semibold">{c.title}</b>, {c.issuer}
+                    <b className="font-semibold">{c.name}</b>, {c.issuer}
                     {c.url && <> · <a href={c.url} target="_blank" rel="noopener noreferrer" className="a">verify</a></>}
                   </span>
                 </li>

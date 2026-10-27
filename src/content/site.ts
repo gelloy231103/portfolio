@@ -15,6 +15,8 @@ export const site = {
   email: "louiseangellopuncia@gmail.com",
   github: "https://github.com/gelloy231103",
   githubHandle: "gelloy231103",
+  /** Public Credly profile with verifiable badges. */
+  credly: "https://www.credly.com/users/louise-angello-cabana",
   /** Path under /public, e.g. "/resume.pdf". Leave null to hide the résumé link. */
   resume: null as string | null,
   /** Kept static so pages prerender without reading the clock. */

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { certifications, fullName } from "@/content/credentials";
 import { site, siteUrl } from "@/content/site";
 import "./globals.css";
 
@@ -35,7 +36,16 @@ const personJsonLd = {
   jobTitle: site.role,
   worksFor: { "@type": "GovernmentOrganization", name: site.employer },
   url: siteUrl(),
-  sameAs: [site.github],
+  sameAs: [site.github, site.credly],
+  hasCredential: certifications.map((c) => ({
+    "@type": "EducationalOccupationalCredential",
+    name: fullName(c),
+    credentialCategory: "certification",
+    recognizedBy: { "@type": "Organization", name: c.issuer },
+    dateCreated: c.date,
+    ...(c.expires ? { expires: c.expires } : {}),
+    ...(c.url ? { url: c.url } : {}),
+  })),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
