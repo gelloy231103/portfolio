@@ -43,7 +43,7 @@ export const credentials: Credential[] = [
     date: "2025-10",
     expires: "2027-10",
     kind: "Certification",
-    url: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=336EA798F7D4530690277EE9403F1ECE72701FE037F6862B88A84321594843BC",
+    url: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=336EA798F7D4530690277EE9403F1ECE72701FE037F6862B88A84321594843BC",
   },
   {
     series: "Oracle Cloud Infrastructure 2025",
@@ -52,7 +52,7 @@ export const credentials: Credential[] = [
     date: "2025-09",
     expires: "2027-09",
     kind: "Certification",
-    url: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=D4E9C5B2C929C08D23089F6219CB47C7F82383EB4B18C9830816E953BAEA812F",
+    url: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=D4E9C5B2C929C08D23089F6219CB47C7F82383EB4B18C9830816E953BAEA812F",
   },
   {
     series: "Oracle Cloud Infrastructure 2025",
