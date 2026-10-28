@@ -1,12 +1,53 @@
 "use client";
 
 import { useActionState } from "react";
-import { sendMessage, type ContactState } from "@/app/actions/contact";
+import { type ContactState, validateContact, WEB3FORMS_ENDPOINT, web3formsKey } from "@/lib/contact";
 import { ArrowRight, CheckIcon } from "./icons";
 
 const initialState: ContactState = { status: "idle" };
+const SENT = "Thanks! Your message is on its way. I'll reply by e-mail.";
 
-/** Contact form, styled for the inverted contact block. */
+/** Checks the fields, then sends the message to Web3Forms, which forwards it to my inbox. */
+async function sendMessage(_prev: ContactState, formData: FormData): Promise<ContactState> {
+  const values = {
+    name: String(formData.get("name") ?? ""),
+    email: String(formData.get("email") ?? ""),
+    message: String(formData.get("message") ?? ""),
+  };
+
+  // A filled honeypot means a bot: pretend it worked and send nothing.
+  if (String(formData.get("company") ?? "")) return { status: "success", message: SENT };
+
+  const errors = validateContact(values);
+  if (Object.keys(errors).length > 0) return { status: "error", message: "Check the highlighted fields.", values, errors };
+
+  if (!web3formsKey) {
+    return { status: "error", values, message: "The contact form isn't connected yet. Please e-mail me instead." };
+  }
+
+  try {
+    const res = await fetch(WEB3FORMS_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: web3formsKey,
+        subject: `Portfolio message from ${values.name.trim()}`,
+        from_name: "Portfolio contact form",
+        name: values.name.trim(),
+        email: values.email.trim(),
+        message: values.message.trim(),
+      }),
+    });
+    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+    if (!res.ok || !data?.success) throw new Error(`Web3Forms responded ${res.status}`);
+  } catch {
+    return { status: "error", values, message: "Your message couldn't be sent. Please try again or e-mail me." };
+  }
+
+  return { status: "success", message: SENT };
+}
+
+/** Contact form, styled for the inverted contact block. Runs entirely in the browser. */
 export function ContactForm() {
   const [state, formAction, pending] = useActionState(sendMessage, initialState);
   const values = state.status === "error" ? state.values : undefined;

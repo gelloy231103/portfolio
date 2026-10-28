@@ -10,7 +10,7 @@ import { experience } from "@/content/experience";
 import { coverImage, projects, projectsShowcase } from "@/content/projects";
 import { site } from "@/content/site";
 import { formatMonth, monthYear } from "@/lib/dates";
-import { mediaUrl } from "@/lib/media";
+import { videoUrl } from "@/lib/media";
 
 /** Where each hero screenshot rests, and where it moves when the collage fans out on hover. */
 type CollagePose = CSSProperties & { "--rest": string; "--fan": string };
@@ -29,7 +29,7 @@ export default function HomePage() {
   // Up to three projects with real screenshots for the hero collage.
   const collage = projectsShowcase.filter((p) => coverImage(p)).slice(0, 3);
   const showcase: ShowcaseItem[] = projectsShowcase.map((p) => {
-    const videoSrc = p.video ? mediaUrl(p.video.file) : null;
+    const videoSrc = p.video ? videoUrl(p.video.file) : null;
     return {
       slug: p.slug,
       name: p.name,
