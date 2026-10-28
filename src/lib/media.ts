@@ -1,8 +1,11 @@
-const BUCKET = "media";
+import "server-only";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 
-/** Public URL of a file in the Supabase Storage "media" bucket, or null when Supabase isn't configured. */
-export function mediaUrl(file: string): string | null {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!base) return null;
-  return `${base.replace(/\/$/, "")}/storage/v1/object/public/${BUCKET}/${encodeURIComponent(file)}`;
+/**
+ * URL of a demo video stored in /public/videos, or null when the file isn't there yet.
+ * Checked when pages are built, so a missing video hides its "Watch demo" button instead of breaking.
+ */
+export function videoUrl(file: string): string | null {
+  return existsSync(join(process.cwd(), "public", "videos", file)) ? `/videos/${encodeURIComponent(file)}` : null;
 }

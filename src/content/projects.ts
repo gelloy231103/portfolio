@@ -30,7 +30,7 @@ export type Project = {
    * The first one is also used as the cover when the project has no demo poster.
    */
   gallery?: { src: string; alt: string }[];
-  /** Demo video stored in the Supabase "media" bucket, with a poster in /public/posters. */
+  /** Demo video in /public/videos, with a poster in /public/posters. */
   video?: { file: string; poster: string; note?: string };
 };
 

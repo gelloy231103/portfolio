@@ -1,10 +1,10 @@
 import type { Project } from "@/content/projects";
-import { mediaUrl } from "@/lib/media";
+import { videoUrl } from "@/lib/media";
 
 /** Demo video. Nothing downloads until the visitor presses play. */
 export function ProjectVideo({ project }: { project: Project }) {
   if (!project.video) return null;
-  const src = mediaUrl(project.video.file);
+  const src = videoUrl(project.video.file);
   if (!src) return null;
 
   return (

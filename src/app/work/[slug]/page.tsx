@@ -10,7 +10,7 @@ import { ProjectVideo } from "@/components/project-video";
 import { coverImage, getProject, projects, projectsShowcase } from "@/content/projects";
 import { site } from "@/content/site";
 import { monthYear } from "@/lib/dates";
-import { mediaUrl } from "@/lib/media";
+import { videoUrl } from "@/lib/media";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -36,7 +36,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
   // "Next project" follows the same order as the home page showcase.
   const i = projectsShowcase.findIndex((p) => p.slug === project.slug);
   const next = projectsShowcase[(i + 1) % projectsShowcase.length];
-  const hasVideo = Boolean(project.video && mediaUrl(project.video.file));
+  const hasVideo = Boolean(project.video && videoUrl(project.video.file));
 
   const facts: [string, string][] = [
     ["My role", project.role],
